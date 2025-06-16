@@ -1,0 +1,6 @@
+body, #root {
+  display: flex;
+  overflow: hidden;
+  flex: 1;
+  height: 100vh;
+}

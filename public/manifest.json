@@ -1,0 +1,16 @@
+{
+  "short_name": "Mote",
+  "name": "Mote",
+  "icons": [
+    {
+      "src": "/mote-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#7777bb",
+  "background_color": "#ffffff"
+}
