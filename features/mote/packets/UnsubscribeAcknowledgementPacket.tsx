@@ -1,5 +1,0 @@
-import PacketWithId from "@/features/mote/packets/PacketWithId";
-
-export default class UnsubscribeAcknowledgementPacket extends PacketWithId {
-  type = 11;
-}

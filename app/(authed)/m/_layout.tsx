@@ -1,3 +1,1 @@
-import {Slot} from "expo-router";
-
-export default Slot;
+export {Slot as default} from "expo-router";

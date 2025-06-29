@@ -1,12 +1,7 @@
 import {useMemo} from "react";
 import {deviceOptionsKey, devicesKey, deviceTreeKey, roleTreeKey} from "./keys";
-import useStorer from "@/features/store/useStorer";
-import useMote from "@/features/mote/useMote";
-import useSubscription from "@/features/mote/useSubscription";
+import {useStorer, useMote, useSubscription, BranchNodeType, MoteControllerType, joinPaths, } from "@/core";
 import DeviceType from "@/modules/devices/types/DeviceType";
-import {BranchNodeType} from "@/features/mote/types/NodeType";
-import MoteControllerType from "@/features/mote/types/MoteControllerType";
-import joinPaths from "@/utils/joinPaths";
 import deviceCategoryInfo from "@/modules/devices/deviceCategoryInfo";
 import DeviceCategory from "@/modules/devices/types/DeviceCategory";
 import DeviceSettings from "@/modules/devices/DeviceSettings";

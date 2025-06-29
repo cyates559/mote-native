@@ -1,3 +1,1 @@
-import RootLayout from "@/features/RootLayout";
-
-export default RootLayout
+export {RootLayout as default} from "@/core/layouts";

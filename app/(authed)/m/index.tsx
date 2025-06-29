@@ -1,3 +1,1 @@
-import Home from "@/features/ModuleLayout/Home";
-
-export default Home;
+export {Home as default} from "@/core/layouts";

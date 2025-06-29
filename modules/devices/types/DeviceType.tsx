@@ -1,4 +1,4 @@
-import {StaticRouteType} from "@/features/ModuleLayout/types/RouteType";
+import {StaticRouteType} from "@/core";
 import DeviceCategory from "@/modules/devices/types/DeviceCategory";
 
 export default interface DeviceType extends StaticRouteType {

@@ -1,3 +1,1 @@
-import Route from "@/features/ModuleLayout/Route";
-
-export default Route;
+export {Route as default} from "@/core/layouts";
