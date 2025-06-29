@@ -1,4 +1,4 @@
-import {useEffect, useRef} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {
   BackgroundView, BaseButtonLink, T,
   styled, View, ScrollView, NavTheme, Icon,
@@ -34,9 +34,16 @@ export default function Navbar() {
   const ref = useRef<ScrollView>();
   const currentRef = useRef<View>();
   const l = breadcrumbs.length - 1;
-  useEffect(() => currentRef.current?.measure(
-    (x) => setTimeout(() => ref.current?.scrollTo({x, animated: true}))
-  ), [breadcrumbs]);
+  const animator = useRef<number>(0);
+  const onUpdate = useCallback(() => {
+    window.clearTimeout(animator.current);
+    return currentRef.current?.measure(
+      (x) => {
+        animator.current = window.setTimeout(() => ref.current?.scrollTo({x, animated: true}));
+      }
+    );
+  }, [breadcrumbs]);
+  useEffect(onUpdate, [onUpdate]);
   return (
     <NavTheme>
       <NavbarContainer>
@@ -45,7 +52,7 @@ export default function Navbar() {
           {l === -1? undefined: <Icon name="ChevronRight"/>
           }
         </NavLink>
-      <ScrollContainer forwardRef={ref}>
+      <ScrollContainer forwardRef={ref} onLayout={onUpdate}>
         {breadcrumbs.map((crumb, i) => (
           <NavLink key={i} forwardRef={i===l? currentRef: undefined} href={crumb.href}>
             <T>
