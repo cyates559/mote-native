@@ -10,5 +10,8 @@ export default interface RouterType {
   title: string;
   href: Href;
   Page: ComponentType;
-  currentOptions: RouteOptionsType
+  pageProps?: Record<string, any>;
+  currentOptions: RouteOptionsType;
+  back: () => void;
+  dismiss: () => void;
 }

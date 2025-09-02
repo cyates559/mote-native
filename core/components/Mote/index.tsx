@@ -1,0 +1,1 @@
+export {default as MoteLogo, MoteLogoPropsType} from "./MoteLogo";

@@ -1,12 +1,17 @@
 import useModuleRouter from "@/core/layouts/MoteLayout/useModuleRouter";
-import {T, FigureButton, useHrefOnPress, styled, ScrollView} from "@/core/components";
+import {T, FigureButton, useHrefOnPress, styled, FigureButtonPropsType} from "@/core/components";
 import {RouteOptionType} from "./types/RouteType";
+import {ComponentType} from "react";
+import {ViewProps} from "react-native";
+import BackgroundScrollView from "@/core/components/View/BackgroundScrollView";
 
-const Container = styled(ScrollView, {
+export const DefaultIndexContainer = styled(BackgroundScrollView, {
   style: {
-    flex: 1,
+    alignSelf: "stretch",
   },
   contentContainerStyle: {
+    overflow: "hidden",
+    justifyContent: "center",
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
@@ -14,20 +19,33 @@ const Container = styled(ScrollView, {
   },
 });
 
-export function DefaultFigureButton({option: {title, icon, href, hrefMode}}: {option: RouteOptionType}) {
+export const DefaultFigureButton = styled(FigureButton, {
+});
+
+export type RouteOptionPropsType = {
+  option: RouteOptionType,
+};
+
+export function DefaultFigureButtonLink({option, ...rest}: RouteOptionPropsType & FigureButtonPropsType) {
+  const {title, icon, href, hrefMode} = option;
   return (
-    <FigureButton accent filled icon={icon} onPress={useHrefOnPress({href, hrefMode})} text={title}/>
+    <DefaultFigureButton icon={icon} onPress={useHrefOnPress({href, hrefMode})} text={title} {...rest}/>
   );
 }
 
-export default function DefaultIndex() {
+export type DefaultIndexPropsType = ViewProps & {
+  ButtonClass?: ComponentType<RouteOptionPropsType>,
+  ContainerClass?: ComponentType,
+}
+
+export default function DefaultIndex({ContainerClass=DefaultIndexContainer, ButtonClass=DefaultFigureButtonLink, ...rest}: DefaultIndexPropsType) {
   const {currentOptions} = useModuleRouter();
   return (
-    <Container>
+    <ContainerClass {...rest}>
       {currentOptions.map((option, i) => typeof option === "string"?
         <T key={i}>Loading {option}</T>:
-        <DefaultFigureButton key={i} option={option}/>
+        <ButtonClass key={i} option={option}/>
       )}
-    </Container>
+    </ContainerClass>
   )
 }

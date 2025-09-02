@@ -1,13 +1,15 @@
 export {
   SafeAreaView,
   StyleSheet,
-  View, ViewProps, ViewStyle,
+  View, ViewProps as ViewPropsType, ViewStyle as ViewStyleType,
   ScrollView, ScrollViewProps,
-  Text, TextProps, TextStyle,
-  Pressable, PressableProps,
-  Image, ImageProps,
-  ImageBackground, ImageBackgroundProps,
-  ActivityIndicator, ActivityIndicatorProps,
+  Text, TextProps as CoreTextPropsType, TextStyle as TextStyleType,
+  TextInput as CoreTextInput, TextInputProps as CoreTextInputPropsType,
+  Pressable, PressableProps as PressablePropsType,
+  Image, ImageProps as ImagePropsType,
+  ImageBackground, ImageBackgroundProps as ImageBackgroundPropsType,
+  ActivityIndicator, ActivityIndicatorProps as ActivityIndicatorPropsType,
+  LayoutChangeEvent as LayoutChangeEventType,
 } from "react-native";
 
 export * from "@/core/theme";

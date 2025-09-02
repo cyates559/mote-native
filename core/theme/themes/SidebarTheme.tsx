@@ -1,6 +1,8 @@
-import {ReactNode} from "react";
-import Themer from "../Themer";
+import createTheme from "@/core/theme/createTheme";
 
-export default function SidebarTheme(props: {children?: ReactNode}) {
-  return <Themer buttonColor="sidebarColor" backgroundColor="sidebarBackgroundColor" {...props}/>
-}
+const SidebarTheme = createTheme("Sidebar", {
+  color: "sidebarColor",
+  backgroundColor: "sidebarBackgroundColor",
+});
+
+export default SidebarTheme;

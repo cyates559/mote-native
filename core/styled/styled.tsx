@@ -5,8 +5,10 @@ import {StylePropsType} from "./types/StylePropsType";
 
 export default function styled<InPropsType extends StylePropsType, DefaultPropsKeys extends keyof InPropsType>(
   InComponent: ComponentType<InPropsType>,
-  defaultProps: ThemablePropsType<Pick<InPropsType, DefaultPropsKeys>>
+  allDefaultProps: ThemablePropsType<Pick<InPropsType, DefaultPropsKeys>>
 ) {
+  // @ts-ignore
+  const {style: defaultStyle, ...defaultProps} = allDefaultProps;
   const refPropKey = InComponent.hasOwnProperty("rejectRef")? "forwardRef": "ref";
   type DefaultPropsType = Pick<InPropsType, DefaultPropsKeys>;
   type RemainingPropsType = Omit<InPropsType, DefaultPropsKeys>;
@@ -14,20 +16,36 @@ export default function styled<InPropsType extends StylePropsType, DefaultPropsK
   function OutComponent({style: extraStyle, forwardRef, ...props}: OutPropsType) {
     const theme = useTheme();
     const refProps = useMemo(() => forwardRef? {[refPropKey]: forwardRef}: {}, [forwardRef]);
-    const {style=undefined, ...themedProps} = useMemo(() => Object.keys(defaultProps).reduce((results, key) => {
+
+
+    const flatProps = useMemo(() => Object.keys(defaultProps).reduce((results, key) => {
       // @ts-ignore
       const value = defaultProps[key];
-      results[key] = value instanceof Function? value(theme): value;
+      if(!(value instanceof Function)) {
+        results[key] = value;
+      }
       return results;
-    }, {} as any), []);
+    }, {} as any), [defaultProps]);
+
+    const dynamicProps = useMemo(() => Object.keys(defaultProps).reduce((results, key) => {
+      // @ts-ignore
+      const value = defaultProps[key];
+      if(value instanceof Function) {
+        results[key] = value(theme);
+      }
+      return results;
+    }, {} as any), [theme, defaultProps]);
+
+    const style: any = useMemo(() => (
+      defaultStyle instanceof Function? defaultStyle(theme): defaultStyle
+    ), [defaultStyle, theme]);
+
     const styleProps = useMemo(() => (style || extraStyle)? {
       style: StyleSheet.flatten([style, extraStyle])
     }: {}, [style, extraStyle]);
-    return <InComponent {...themedProps} {...props} {...refProps} {...styleProps}/>;
+    return <InComponent {...flatProps} {...dynamicProps} {...props} {...refProps} {...styleProps}/>;
   }
   OutComponent.displayName = `${InComponent.displayName}.styled`;
   OutComponent.rejectRef = true;
-  OutComponent.styled = <D extends keyof OutPropsType>(defaultProps: ThemablePropsType<Pick<OutPropsType, D>>) =>
-    styled(OutComponent, defaultProps);
-  return OutComponent;
+  return OutComponent as ComponentType<OutPropsType>;
 }

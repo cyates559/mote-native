@@ -1,0 +1,1 @@
+export {default as Icon, IconNameType, IconNamePropsType, IconPropsType, GenericIconPropsType} from "./Icon";

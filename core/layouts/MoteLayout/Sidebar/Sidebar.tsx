@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Dimensions, LayoutChangeEvent} from "react-native";
-import {T, BackgroundView, BaseButtonLink, Icon, styled, View, ScrollView, Spinner, SidebarTheme} from "@/core/components";
+import {T, BackgroundView, ButtonLink, Icon, styled, View, ScrollView, Spinner, Themes} from "@/core/components";
 import useModuleRouter from "../useModuleRouter";
 
 
@@ -30,34 +30,34 @@ const SidebarColumn = styled(ScrollView, {
     flexGrow: 0,
     overflowX: "hidden",
   },
-  // contentContainerStyle: {
-  //   gap: 4,
-  //   flexBasis: "auto",
-  //   flexShrink: 0,
-  //   flexGrow: 0,
-  //   overflowX: "hidden",
-  // },
 });
 
 const InnerColumn = styled(View, {
   style: {
     padding: 4,
+    gap: 6,
     flexBasis: "auto",
     overflowX: "hidden",
   }
 })
 
-const SidebarLink = styled(BaseButtonLink, {
+const SidebarLink = styled(ButtonLink, {
   style: {
     justifyContent: "flex-start",
     borderRadius: 1000,
   }
 });
 
+const SidebarLinkText = styled(T, {
+  style: {
+    flexGrow: 1,
+  }
+});
+
 const sidebarPercentage = 0.3;
 
 export default function Sidebar() {
-  const {routeOptions} = useModuleRouter();
+  const {route, routeOptions} = useModuleRouter();
   const [sizes, setSizes] = useState<number[]>([]);
   const [pageWidth, setPageWidth] = useState<number>(Dimensions.get("window").width);
   useEffect(() => {
@@ -89,26 +89,32 @@ export default function Sidebar() {
   }, [pageWidth, sizes]);
   const currentSizeStyle = useMemo(() => ({width}), [width]);
   return (
-    <SidebarTheme>
+    <Themes.Sidebar>
       <SidebarPadding style={width === 0? {paddingHorizontal: 0}: undefined}>
         <SidebarContainer style={currentSizeStyle}>
           {routeOptions.slice(0, -1).map((options, i) =>
             <SidebarColumn key={i}>
               <InnerColumn onLayout={(event) => onLayout(i, event)}>
-                {options.map((option, i) => (typeof option === "string"?
-                  <Spinner key={i} children={option}/>:
-                  <SidebarLink key={option.nodeId} href={option.href} hrefMode={option.hrefMode}>
-                    <Icon name={option.icon}/>
-                    <T>
-                      {option.title}
-                    </T>
-                  </SidebarLink>
-                ))}
+                {options.map((option, j) => {
+                  if (typeof option === "string") {
+                    return <Spinner key={j} children={option}/>;
+                  } else {
+                    const {nodeId, href, hrefMode, icon, title} = option;
+                    const selected = nodeId === route[i + 1];
+                    return (
+                      <SidebarLink key={nodeId} href={href} hrefMode={hrefMode} selected={selected}>
+                      <Icon name={option.icon}/>
+                      <SidebarLinkText children={option.title}/>
+                      <Icon name="ChevronRight" style={selected? {}: {opacity: 0}}/>
+                      </SidebarLink>
+                    );
+                  }
+                })}
               </InnerColumn>
             </SidebarColumn>
           )}
         </SidebarContainer>
       </SidebarPadding>
-    </SidebarTheme>
+    </Themes.Sidebar>
   );
 }

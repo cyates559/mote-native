@@ -1,7 +1,7 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef} from "react";
 import {
-  BackgroundView, BaseButtonLink, T,
-  styled, View, ScrollView, NavTheme, Icon,
+  BackgroundView, ButtonLink, T,
+  styled, View, ScrollView, Themes, Icon,
 } from "@/core/components";
 import useModuleRouter from "./useModuleRouter";
 
@@ -14,7 +14,7 @@ const NavbarContainer = styled(BackgroundView, {
   },
 });
 
-const NavLink = styled(BaseButtonLink, {
+const NavLink = styled(ButtonLink, {
   style: {
     borderRadius: 1000,
   }
@@ -24,7 +24,6 @@ const ScrollContainer = styled(ScrollView, {
   horizontal: true,
   showsHorizontalScrollIndicator: false,
   contentContainerStyle: {
-    gap: 4,
     paddingRight: 4,
   }
 });
@@ -45,12 +44,11 @@ export default function Navbar() {
   }, [breadcrumbs]);
   useEffect(onUpdate, [onUpdate]);
   return (
-    <NavTheme>
+    <Themes.Nav>
       <NavbarContainer>
         <NavLink href="/m/">
           <Icon name="House"/>
-          {l === -1? undefined: <Icon name="ChevronRight"/>
-          }
+          {l === -1? undefined: <Icon name="ChevronRight"/>}
         </NavLink>
       <ScrollContainer forwardRef={ref} onLayout={onUpdate}>
         {breadcrumbs.map((crumb, i) => (
@@ -65,6 +63,6 @@ export default function Navbar() {
         ))}
       </ScrollContainer>
       </NavbarContainer>
-    </NavTheme>
+    </Themes.Nav>
   )
 }

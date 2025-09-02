@@ -1,6 +1,8 @@
-import {ReactNode} from "react";
-import Themer from "../Themer";
+import createTheme from "@/core/theme/createTheme";
 
-export default function NavTheme(props: {children?: ReactNode}) {
-  return <Themer buttonColor="navColor" backgroundColor="navBackgroundColor" {...props}/>
-}
+const NavTheme = createTheme("Nav", {
+  color: "navColor",
+  backgroundColor: "navBackgroundColor",
+});
+
+export default NavTheme;

@@ -1,11 +1,12 @@
-import {IconNameType} from "@/core/components";
+import {IconNameType, HrefModeType} from "@/core/components";
 import {Href} from "expo-router";
 import {ComponentType} from "react";
-import {HrefModeType} from "@/core/components/BaseButtonLink";
+import { DefaultIndexPropsType } from "../DefaultIndex";
 
-export type BaseRouteType = {
+export type BaseRouteType<P=DefaultIndexPropsType> = {
   nodeId: string;
   Page?: ComponentType;
+  props?: P;
   children?: RouteType[];
   href?: Href;
   hrefMode?: HrefModeType;
@@ -28,6 +29,7 @@ export type BreadcrumbType = {
   href: Href;
   title: string;
   Page: ComponentType;
+  pageProps?: Record<string, any>;
   nodeId: string;
 }
 

@@ -1,7 +1,7 @@
-import {Href} from "expo-router";
+import {Href, useRouter} from "expo-router";
 import RouterType from "@/core/layouts/MoteLayout/types/RouterType";
 import useStores from "@/core/store/useStores";
-import {ComponentType, useMemo} from "react";
+import {ComponentType, useCallback, useMemo} from "react";
 import ModulePropsType from "@/core/layouts/MoteLayout/types/ModulePropsType";
 import RouteType, {
   BreadcrumbsType,
@@ -131,7 +131,7 @@ export function getBreadcrumbs(baseHref: Href, route: string[], routeOptions: Ro
     const currentRoute = routeOptions[i]?.find(option => typeof option !== "string" && option.nodeId === nodeId) as StaticRouteType | undefined;
     const title = currentRoute?.title?? "?";
     const Page = currentRoute == null? NotFound: currentRoute.Page?? DefaultIndex;
-    return {nodeId, href, title, Page};
+    return {nodeId, href, title, Page, pageProps: currentRoute?.props?? {}};
   });
 }
 
@@ -144,6 +144,7 @@ const rootCrumb = {href: "", ...rootProps};
 
 export default function useRouterController(props: ModulePropsType): RouterType {
   const {pathname} = useRouteInfo()
+  const {back, dismiss} = useRouter();
   const route = useMemo(() => {
     const route = pathname.split("/").slice(1);
     route[0] = "/";
@@ -162,5 +163,5 @@ export default function useRouterController(props: ModulePropsType): RouterType 
   const breadcrumbs = useMemo(() => getBreadcrumbs(baseHref, route, routeOptions), [routeOptions, route, baseHref]);
   const currentOptions: RouteOptionsType = useMemo(() => routeOptions[route.length - 1], [route, routeOptions]);
   const currentProps = useMemo(() => breadcrumbs.slice(-1)[0]?? rootCrumb, [breadcrumbs]);
-  return {route, routeOptions, breadcrumbs, currentOptions, ...currentProps};
+  return {route, routeOptions, breadcrumbs, currentOptions, back, dismiss, ...currentProps};
 }

@@ -3,7 +3,7 @@ import StoreContext from "./StoreContext";
 import StoreKeyType from "@/core/store/types/StoreKeyType";
 import StoreDataType from "@/core/store/types/StoreDataType";
 
-export default function useStore(key: StoreKeyType, defaultValue: StoreDataType=null) {
+export default function useStore<T=StoreDataType>(key: StoreKeyType, defaultValue?: T): T {
   const {addCallback, removeCallback, store} = useContext(StoreContext);
   const [state, setState] = useState(store[key]);
   useEffect(() => {

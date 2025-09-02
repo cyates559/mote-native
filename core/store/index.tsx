@@ -9,3 +9,4 @@ export {default as StoreProvider} from "./StoreProvider";
 export {default as useStore} from "./useStore";
 export {default as useStorer} from "./useStorer";
 export {default as useStores} from "./useStores";
+export {default as Storer} from "./Storer";

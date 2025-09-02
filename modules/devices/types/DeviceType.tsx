@@ -9,8 +9,14 @@ export default interface DeviceType extends StaticRouteType {
   rolesTopic: string;
   isConnected: boolean;
   roles: string[];
-  off: () => void;
-  reboot: () => void;
+  off?: () => void;
+  reboot?: () => void;
   wake?: () => void;
+  upgrade?: () => void;
+  stopService?: () => void;
+  restartService?: () => void;
   sleep?: () => void;
+  delete: () => void;
+  rename: (newName: string) => void;
+  setRoleEnabled: (roleId: string, enabled: boolean) => void;
 }

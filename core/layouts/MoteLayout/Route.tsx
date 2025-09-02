@@ -1,7 +1,7 @@
 import useModuleRouter from "./useModuleRouter";
 
 export default function Route() {
-  const {Page} = useModuleRouter();
+  const {Page, pageProps} = useModuleRouter();
   // if(typeof Page === "string") {
   //   return <Loading>
   //     <T>
@@ -9,5 +9,5 @@ export default function Route() {
   //     </T>
   //   </Loading>
   // }
-  return <Page/>
+  return <Page {...pageProps}/>
 }

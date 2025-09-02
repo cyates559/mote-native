@@ -1,9 +1,10 @@
 import {Redirect} from "expo-router";
-import {Loading, DeadEnd} from "@/core/components";
+import {Loading, Leaf} from "@/core/components";
 import {StoreProvider} from "@/core/store";
 import {useMoteController, ConnectionState} from "@/core/mote";
 import MoteContext from "./MoteContext";
 import ModuleLayout from "./ModuleLayout";
+import {AsyncStorageLayout} from "@/core";
 
 export default function MoteLayout() {
   const mote = useMoteController();
@@ -11,7 +12,7 @@ export default function MoteLayout() {
     case ConnectionState.AUTHENTICATING:
       return (
         <Loading
-          header="Authenticating..."
+          header="Logging in..."
           text="Almost theme"
         />
       );
@@ -24,7 +25,7 @@ export default function MoteLayout() {
       );
     default: case ConnectionState.ERROR:
       return (
-        <DeadEnd
+        <Leaf
           header="Error"
           text={mote.state + " " + mote.error}
         />
@@ -33,11 +34,13 @@ export default function MoteLayout() {
       return <Redirect href="/"/>
     case ConnectionState.AUTHENTICATED:
       return (
-        <MoteContext.Provider value={mote}>
-          <StoreProvider>
-            <ModuleLayout/>
-          </StoreProvider>
-        </MoteContext.Provider>
+        <AsyncStorageLayout>
+          <MoteContext.Provider value={mote}>
+            <StoreProvider>
+              <ModuleLayout/>
+            </StoreProvider>
+          </MoteContext.Provider>
+        </AsyncStorageLayout>
       );
   }
 };

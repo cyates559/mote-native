@@ -9,7 +9,7 @@ export default function RootLayout() {
   const theme = useTheme();
   if(!loaded) {
     return <Loading
-      header="Loading fonts..."
+      header="Loading Fonts..."
       text="Don't hold your breath"
     />
   }
@@ -22,7 +22,7 @@ export default function RootLayout() {
     // );
   }
   return <>
-    <StatusBar backgroundColor={theme.secondaryAccentColor} barStyle="light-content"/>
+    <StatusBar backgroundColor={theme.spicyColor} barStyle="light-content"/>
     <Slot/>
   </>;
 }

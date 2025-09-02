@@ -1,6 +1,6 @@
 import {PublishPropsType} from "@/core/mote/packets/PublishPacket";
 import Packet from "@/core/mote/packets/Packet";
-import MoteControllerType from "@/core/mote/types/MoteControllerType";
+import MoteControllerType, {SubscriptionResultPair} from "@/core/mote/types/MoteControllerType";
 import {SetStateAction, useCallback, useEffect, useRef, useState} from "react";
 import ConnectionState from "@/core/mote/types/ConnectionState";
 import noop from "@/core/utils/noop";
@@ -351,7 +351,7 @@ export default function useMoteController(): MoteControllerType {
   }, [isMessageInflight]);
 
   const publish: PublisherType = useCallback((topic, message, options = {}) => {
-    const data = encoder.encode("some test data")
+    const data = encoder.encode(message)
     const {qos = 0, retain = false} = options;
     const {current: client} = webSocketRef;
     if (!client) {
@@ -360,7 +360,7 @@ export default function useMoteController(): MoteControllerType {
     const guarantee = qos > 0;
     let id;
     try {
-      id = guarantee ? getNextMessageId() : 0;
+      id = guarantee ? getNextMessageId() : 1;
     } catch (e) {
       setError(e as Error);
       disconnect.current?.();
@@ -369,7 +369,7 @@ export default function useMoteController(): MoteControllerType {
     const publishProps = {id, topic, data, qos, retain};
     if (guarantee) {
       const timeout = window.setTimeout(() => {
-        console.error("QOS not met! Disconnecting!");
+        console.error("QOS not met! Disconnecting! (1)");
         // TODO resend packet with DUP flag
       }, MIN_RESPONSE_TIME);
       outgoingMessages.current.push({...publishProps, timeout});
@@ -405,7 +405,7 @@ export default function useMoteController(): MoteControllerType {
     }
     const subscribeProps = {id, topics: props};
     const timeout = window.setTimeout(() => {
-      console.error("QOS not met! Disconnecting!");
+      console.error("QOS not met! Disconnecting! (2)");
       // TODO resend packet with DUP flag
     }, MIN_RESPONSE_TIME);
     outgoingSubscribes.current.push({...subscribeProps, timeout});
@@ -439,14 +439,18 @@ export default function useMoteController(): MoteControllerType {
     }
     const unsubProps = {id, topics: [topic]};
     const timeout = window.setTimeout(() => {
-      console.error("QOS not met! Disconnecting!");
+      console.error("QOS not met! Disconnecting! (3)");
       // TODO resend packet with DUP flag
     }, MIN_RESPONSE_TIME);
     outgoingUnsubscribes.current.push({...unsubProps, timeout});
     if(state !== ConnectionState.AUTHENTICATED) {
       return;
     }
-    client.send(Packet.toBytes("unsubscribe", unsubProps));
+    try {
+      client.send(Packet.toBytes("unsubscribe", unsubProps));
+    } catch (e) {
+      console.log("Unsub Error", e);
+    }
   }, [getNextMessageId]);
 
   const removeListener = useCallback((topic: string, callback: CallbackType) => {
@@ -498,7 +502,7 @@ export default function useMoteController(): MoteControllerType {
     }
   }, [unsubscribe]);
 
-  const addSubscription = useCallback((topic: string, callback: CallbackType, qos: QosType=1) => {
+  const addSubscription = useCallback((topic: string, callback: CallbackType, qos: QosType=1): SubscriptionResultPair => {
     let data = null;
     if(subscriptionsRef.current.hasOwnProperty(topic)) {
       subscriptionsRef.current[topic].push(callback);
@@ -513,11 +517,11 @@ export default function useMoteController(): MoteControllerType {
         qos, retain: false, // TODO: this will be used in the future
       });
     }
-    return [ () => removeSubscription(topic, callback), data]
+    return [() => removeSubscription(topic, callback), data]
   }, [subscribe, removeSubscription]);
 
   const addSubscriptions = useCallback((topics: string[], callbacks: CallbackType[], qos: QosType=1) => {
-    const results = [];
+    const results: [() => void, string | {[key: string]: NodeType} | null][] = [];
     const fullTopics = [];
     for(let i = 0; i < topics.length; i++) {
       const topic = topics[i];

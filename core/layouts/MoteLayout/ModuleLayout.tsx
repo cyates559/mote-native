@@ -1,6 +1,6 @@
 import {Fragment} from "react";
 import {Slot} from "expo-router";
-import {Row, View, ViewStyle, SafeAreaView, ThemeType, styled} from "@/core/components";
+import {Row, View, ViewStyleType, SafeAreaView, ThemeType, styled} from "@/core/components";
 import * as modules from "@/modules";
 
 import ModulePropsType from "./types/ModulePropsType";
@@ -42,7 +42,7 @@ props.composer.push({
 });
 
 const MainContainer = styled(Row, {
-  style: ({backgroundColor}: ThemeType): ViewStyle => ({
+  style: ({backgroundColor}: ThemeType): ViewStyleType => ({
     height: "100%",
     backgroundColor,
   }),

@@ -1,5 +1,4 @@
-import ModulePropsType from "@/core/layouts/MoteLayout/types/ModulePropsType";
-import BaseModule from "@/core/layouts/MoteLayout/BaseModule";
+import {BaseModule, ModulePropsType} from "@/core";
 import {deviceOptionsKey} from "@/modules/devices/keys";
 import DevicesWorker from "@/modules/devices/DevicesWorker";
 
