@@ -8,7 +8,7 @@ import {
   TextStyleType
 } from "@/core/styled";
 import Row from "@/core/components/View/Row";
-import {Dispatch, SetStateAction, useMemo} from "react";
+import {Dispatch, SetStateAction} from "react";
 import {Icon, IconNameType} from "../Icon";
 
 export interface TextInputPropsType extends

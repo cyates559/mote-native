@@ -1,85 +1,42 @@
-import {ReactNode, useCallback, useMemo} from "react";
+import {ReactNode} from "react";
 import {styled, View, ViewPropsType, Row} from "@/core/components/View";
 import useFormView from "./useFormView";
-import {ViewStyleType, StyleSheet, LayoutChangeEventType} from "@/core/styled";
+import {ViewStyleType} from "@/core/styled";
 
 export interface FormViewPropsType extends ViewPropsType {
   children: ReactNode[];
-  outerStyle?: ViewStyleType;
-  rowStyle?: ViewStyleType;
+  pairStyle?: ViewStyleType;
   leftStyle?: ViewStyleType;
   rightStyle?: ViewStyleType;
 }
 
 const Container = styled(View, {
   style: {
-    flexGrow: 1,
+    gap: 8,
   },
 });
 
-const SizeController = styled(View, {
+const Pair = styled(View, {
   style: {
-    gap: 10,
-    flex: 1,
+    gap: 2,
   },
 });
 
-const Cell = styled(Row, {
+const Cell = styled(View, {
   style: {
-    overflowX: "hidden",
   },
 });
-
-const InnerCell = styled(View, {
-  style: {
-    paddingHorizontal: 6,
-    paddingBottom: 3,
-  },
-})
-
-type CellSizerPropsType = {index: number, onWidthChange: (index: number, width: number) => void} & ViewPropsType;
-
-function CellSizer({onWidthChange, index, ...rest}: CellSizerPropsType) {
-  const onLayout = useCallback((e: LayoutChangeEventType) => {
-    const {nativeEvent: {layout: {width}}} = e;
-    onWidthChange(index, width);
-  }, [index, onWidthChange]);
-  return (
-    <InnerCell onLayout={onLayout} {...rest}/>
-  );
-}
 
 export default function FormView(props: FormViewPropsType) {
-  const {children, outerStyle, rowStyle, leftStyle, rightStyle, ...rest} = props;
-  const controller = useFormView(children);
-  const outerStyleSheet: ViewStyleType = useMemo(() => StyleSheet.flatten([outerStyle, {
-    flexBasis: controller.containerWidth
-  }]), [outerStyle, controller.containerWidth]);
-  const rowStyleSheet: ViewStyleType = useMemo(() => StyleSheet.flatten([rowStyle, {
-    flexDirection: controller.isWrapped? "column": "row",
-    justifyContent: "center",
-  }]), [controller.isWrapped, rowStyle]);
-  const leftStyleSheet: ViewStyleType = useMemo(() => StyleSheet.flatten([leftStyle, {
-    width: controller.leftWidth,
-    justifyContent: controller.isWrapped? undefined: "flex-end",
-  }]), [leftStyle, controller.leftWidth, controller.isWrapped]);
-  const rightStyleSheet: ViewStyleType = useMemo(() => StyleSheet.flatten([rightStyle, {
-    width: controller.rightWidth,
-  }]), [rightStyle, controller.rightWidth]);
+  const {children, pairStyle, leftStyle, rightStyle, ...rest} = props;
   return (
-    <Container style={outerStyleSheet}>
-      <SizeController {...rest} onLayout={controller.onLayout}>
-        {controller.childPairs.map(([left, right], i) =>
-          <Row key={i} style={rowStyleSheet}>
-            <Cell style={leftStyleSheet}>
-              <CellSizer index={i} onWidthChange={controller.onLeftWidthChange} children={left}/>
-            </Cell>
-            <Cell style={rightStyleSheet}>
-              <CellSizer index={i} onWidthChange={controller.onRightWidthChange} children={right}/>
-            </Cell>
-          </Row>
-        )}
-      </SizeController>
+    <Container {...rest}>
+      {useFormView(children).map(([left, right], i) =>
+        <Pair key={i} style={pairStyle}>
+          <Cell style={leftStyle} children={left}/>
+          <Cell style={rightStyle} children={right}/>
+        </Pair>
+      )}
     </Container>
   );
 }

@@ -8,6 +8,6 @@ export default interface FormViewControllerType {
   isWrapped: boolean;
   leftWidth: number;
   rightWidth: number;
-  onLeftWidthChange: (index: number, width: number) => void;
-  onRightWidthChange: (index: number, width: number) => void;
+  onLeftSizeChange: (index: number, width: number, height: number) => void;
+  onRightSizeChange: (index: number, width: number, height: number) => void;
 }

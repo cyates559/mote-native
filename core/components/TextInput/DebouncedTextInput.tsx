@@ -1,10 +1,7 @@
-import {styled} from "@/core/styled";
 import TextInput, {TextInputPropsType} from "./TextInput";
 import {SetStateAction, useCallback, useRef, useState} from "react";
 
 export interface DebouncedTextInputPropsType extends TextInputPropsType {}
-
-const Component = styled(TextInput, {});
 
 export default function DebouncedTextInput(props: DebouncedTextInputPropsType) {
   const {defaultValue=null, value, setValue, ...rest} = props;
@@ -25,7 +22,7 @@ export default function DebouncedTextInput(props: DebouncedTextInputPropsType) {
     _setUnsavedValue(unsavedValueRef.current);
   }, []);
 
-  return <Component
+  return <TextInput
     value={unsavedValue?? ""}
     setValue={setUnsavedValue}
     onFocus={onFocus}

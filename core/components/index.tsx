@@ -9,3 +9,4 @@ export * from "./Spinner";
 export * from "./Text";
 export * from "./TextInput";
 export * from "./View";
+export * from "./Code";

@@ -1,10 +1,13 @@
 import {TextStyle, ViewStyle} from "react-native";
 import {ColorValue} from "react-native/Libraries/StyleSheet/StyleSheet";
+import {type FontFamilyType} from "@/core/components/Text/T";
 
 export default interface ThemeType {
   // Main theme
   color?: ColorValue;
   style: ViewStyle & TextStyle;
+  textStyle: TextStyle;
+  fontFamily: FontFamilyType;
   backgroundColor?: ColorValue;
   borderColor?: ColorValue;
   

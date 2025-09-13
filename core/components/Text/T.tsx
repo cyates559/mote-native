@@ -1,6 +1,5 @@
 import {useMemo} from "react";
 import {styled, useTheme, StyleSheet, Text, CoreTextPropsType, ThemeKeyType} from "@/core/styled";
-import {TextStyle} from "react-native";
 
 
 const fonts = {
@@ -32,17 +31,17 @@ export interface BaseTextPropsType {
 export type TextPropsType = CoreTextPropsType & BaseTextPropsType;
 
 export default function T(props: TextPropsType) {
+  const theme = useTheme();
   const {
     style,
-    fontFamily="Parkinsans",
+    fontFamily=theme.fontFamily,
     fontStyle: fontType = "Regular",
     fontWeight=400,
     opticalSize=14,
     palette="color",
   } = props;
   const font = fonts[fontFamily];
-  const theme = useTheme();
-  const params = useMemo(() => {
+  const fontParams = useMemo(() => {
     const params: (string | number)[] = [fontFamily];
     if(fontType !== "Regular" && font.types) {
       params.push(fontType);
@@ -56,21 +55,17 @@ export default function T(props: TextPropsType) {
     return params;
   }, [fontFamily, fontType, fontWeight, opticalSize]);
   const stylesheet = useMemo(() => {
-    const base: TextStyle = {
-      // userSelect: "none" as any as undefined,
-      fontSize: 14,
-      paddingTop: 2,
-      fontFamily: params.join("-"),
+    const sheet = StyleSheet.flatten([theme.textStyle, {
+      fontFamily: fontParams.join("-"),
       color: theme[palette] as string,
-    };
-    const sheet = StyleSheet.flatten([base, style]);
+    }, style]);
     if(!sheet.lineHeight) {
       // For Android
       // Por Androide
       sheet.lineHeight = (sheet.fontSize?? 14) + 2;
     }
     return sheet;
-  }, [params, style, theme]);
+  }, [fontParams, style, theme]);
   return <Text {...props} style={stylesheet}/>
 }
 

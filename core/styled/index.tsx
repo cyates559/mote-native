@@ -2,7 +2,7 @@ export {
   SafeAreaView,
   StyleSheet,
   View, ViewProps as ViewPropsType, ViewStyle as ViewStyleType,
-  ScrollView, ScrollViewProps,
+  ScrollView, ScrollViewProps as ScrollViewPropsType,
   Text, TextProps as CoreTextPropsType, TextStyle as TextStyleType,
   TextInput as CoreTextInput, TextInputProps as CoreTextInputPropsType,
   Pressable, PressableProps as PressablePropsType,

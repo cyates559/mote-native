@@ -1,7 +1,10 @@
 export * from "@/core/styled";
 export {default as BackgroundScrollView} from "./BackgroundScrollView";
+export {default as BorderedBackgroundScrollView} from "./BorderedBackgroundScrollView";
 export {default as BackgroundView} from "./BackgroundView";
 export {default as BorderedBackgroundView} from "./BorderedBackgroundView";
 export {default as StyledBorderedBackgroundView} from "./StyledBorderedBackgroundView";
+export {default as StyledBorderedBackgroundScrollView} from "./StyledBorderedBackgroundScrollView";
 export {default as BorderedView} from "./BorderedView";
+export {default as StyledScrollView} from "./StyledScrollView";
 export {default as Row} from "./Row";

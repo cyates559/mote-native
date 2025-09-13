@@ -4,6 +4,12 @@ const defaultTheme: ThemeType = {
   // Main theme
   color: "black",
   style: {},
+  textStyle: {
+    // userSelect: "none" as any as undefined,
+    fontSize: 14,
+    paddingTop: 2,
+  },
+  fontFamily: "Parkinsans",
   backgroundColor: "lightgray",
   borderColor: "#aaaaaa",
   spinnerColor: "#33002a",
