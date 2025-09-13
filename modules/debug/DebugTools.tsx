@@ -2,10 +2,9 @@ import {
   Card,
   DefaultIndexContainer, FormView,
   H,
-  Row,
-  styled, T, TextInput, DebouncedTextInput, useSubscriptions,
+  styled, T, TextInput, DebouncedTextInput, useSubscriptions, Code,
 } from "@/core";
-import {useStoredState} from "@/core";
+import {useStoredState, View, ScrollView} from "@/core";
 
 
 
@@ -24,31 +23,19 @@ const DebugControlHeader = styled(H, {
   }
 });
 
-const MessageBox = styled(TextInput, {
-  multiline: true,
-  scrollEnabled: false,
-  style: {
-    borderBottomRightRadius: 0,
-    borderTopRightRadius: 0,
-  },
-})
-
-
 function Subscriber() {
   const defaultTopic = "device/+/name";
   const [topic, setTopic] = useStoredState(defaultTopic);
   const messages = useSubscriptions(topic? [topic]: []);
   return (
     <DebugControl>
-      <DebugControlHeader children="Subscribe"/><T/>
-      <Row>
-        <FormView>
-          <T children="Test:"/>
-          <DebouncedTextInput value={topic} setValue={setTopic} placeholder={defaultTopic}/>
-          <T children="Other Test:"/>
-          <MessageBox value={JSON.stringify(messages[0], null, 2)}/>
-        </FormView>
-      </Row>
+      <DebugControlHeader children="Subscribe"/>
+      <FormView>
+        <T children="Topic:"/>
+        <DebouncedTextInput value={topic} setValue={setTopic} placeholder={defaultTopic}/>
+        <T children="Messages:"/>
+        <Code children={JSON.stringify(messages[0], null, 2)}/>
+      </FormView>
     </DebugControl>
   );
 }
