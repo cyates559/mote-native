@@ -1,4 +1,4 @@
-import {useSubscription, Storer, joinPaths, MoteControllerType, useMoteController} from "@/core";
+import {useSubscription, Storer, joinPaths, MoteControllerType, useMote} from "@/core";
 import useDevices from "@/modules/devices/types/useDevices";
 import {useMemo} from "react";
 import DeviceType from "@/modules/devices/types/DeviceType";
@@ -44,7 +44,7 @@ export default function RokuWorker() {
   const rokuDeviceTree = useSubscription<Record<string, Record<string, Record<string, string | null>>>>(
     "device/+/role/roku_controller/roku_device/+/+"
   );
-  const moteController = useMoteController();
+  const moteController = useMote();
   const rokuControllers = useMemo(() => devices && Object.keys(devices).reduce((rokuControllers, deviceId) => {
     const device = devices[deviceId];
     if(device.roles.includes("roku_controller")) {
