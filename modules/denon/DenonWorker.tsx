@@ -34,7 +34,7 @@ function parseAVRDevice(
     isOn,
     powerState: (denonAVRData.power_state as any)?? "UNKNOWN",
     togglePower: isOn? actions.sleep: actions.on,
-    icon: "Tv",
+    icon: "Speaker",
     title: denonAVRData.name?? nodeId,
     nodeId: nodeId,
     Page: DenonAVRDevice,
