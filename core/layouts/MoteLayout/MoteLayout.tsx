@@ -1,10 +1,15 @@
 import {Redirect} from "expo-router";
 import {Loading, Leaf} from "@/core/components";
 import {StoreProvider} from "@/core/store";
-import {useMoteController, ConnectionState} from "@/core/mote";
+import {ConnectionState, useMoteController} from "@/core/mote";
 import MoteContext from "./MoteContext";
 import ModuleLayout from "./ModuleLayout";
 import {AsyncStorageLayout} from "@/core";
+import {useEffect, useMemo, useRef, useState} from "react";
+import MoteStateType from "@/core/mote/types/MoteStateType";
+import defaultState from "@/core/mote/defaultState";
+import createController from "@/core/mote/createController";
+import handleStateChange from "@/core/mote/handleStateChange";
 
 export default function MoteLayout() {
   const mote = useMoteController();

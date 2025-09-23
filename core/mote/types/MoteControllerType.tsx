@@ -5,7 +5,7 @@ import CallbackType from "@/core/mote/types/CallbackType";
 import QosType from "@/core/mote/types/QosType";
 import NodeType, {BranchNodeType} from "@/core/mote/types/NodeType";
 
-export type GenericPublisherType<T=string> = (topic: string, message?: T) => void;
+export type GenericPublisherType<T=string | null | undefined> = (topic: string, message?: T) => void;
 
 export type SubscriptionResultPair = [() => void, string | {[key: string]: NodeType} | null];
 
@@ -14,6 +14,7 @@ export default interface MoteControllerType {
   publish: RootPublisherType;
   error: string | null;
   reconnect: () => void;
+  getCachedEvents: (topic: string) => any[];
   getSubscriptionData: (topic: string) => any;
   subscribe: (...props: TopicWithOptionsType[]) => void;
   unsubscribe: (topic: string) => void;
