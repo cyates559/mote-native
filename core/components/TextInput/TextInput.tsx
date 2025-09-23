@@ -5,7 +5,8 @@ import {
   SubTheme,
   ThemeNamePropsType,
   ThemeType,
-  TextStyleType
+  TextStyleType,
+  View,
 } from "@/core/styled";
 import Row from "@/core/components/View/Row";
 import {Dispatch, SetStateAction} from "react";
@@ -20,10 +21,18 @@ export interface TextInputPropsType extends
   setValue?: Dispatch<SetStateAction<string | null>>;
 }
 
-const IconPositioner = styled(Row, {
+const Container = styled(View, {
+  style: {
+    alignItems: "stretch",
+    justifyContent: "center",
+  },
+});
+
+const FloatingIcon = styled(Icon, {
+  size: 16,
   style: {
     position: "absolute",
-    alignItems: "center",
+    start: 6,
   },
 });
 
@@ -34,17 +43,25 @@ const Component = styled(CoreTextInput, {
   }),
 });
 
+const ComponentWithIcon = styled(Component, {
+  style: {
+    paddingLeft: 26,
+  }
+});
+
 export default function TextInput(props: TextInputPropsType) {
   const {value, theme="Input", icon, setValue, ...rest} = props;
   return (
     <SubTheme theme={theme} secondary={!value}>
-      <Component value={value?? ""} onChangeText={setValue} {...rest}>
-        {icon &&
-          <IconPositioner>
-            <Icon name={icon}/>
-          </IconPositioner>
+      <Container>
+        {icon?
+          <>
+            <ComponentWithIcon value={value?? ""} onChangeText={setValue} {...rest}/>
+            <FloatingIcon name={icon}/>
+          </>:
+          <Component value={value?? ""} onChangeText={setValue} {...rest}/>
         }
-      </Component>
+      </Container>
     </SubTheme>
   );
 }
