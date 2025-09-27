@@ -3,7 +3,7 @@ This initial release is mostly to get the code out.  Over the coming weeks we'll
 
 ## Get started
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-1. Setup your [mote-broker]()
+1. Setup your [mote-broker](https://github.com/cyates559/mote-broker/)
 1. Install dependencies
 
    ```bash
