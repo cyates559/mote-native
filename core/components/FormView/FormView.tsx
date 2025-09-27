@@ -1,14 +1,7 @@
-import {ReactNode} from "react";
-import {styled, View, ViewPropsType, Row} from "@/core/components/View";
-import useFormView from "./useFormView";
-import {ViewStyleType} from "@/core/styled";
+import {styled, View, ViewStyleType} from "../View";
+import {FormPairs, FormPairsPropsType} from "../Form";
 
-export interface FormViewPropsType extends ViewPropsType {
-  children: ReactNode[];
-  pairStyle?: ViewStyleType;
-  leftStyle?: ViewStyleType;
-  rightStyle?: ViewStyleType;
-}
+export type FormViewPropsType = FormPairsPropsType & {pairStyle?: ViewStyleType};
 
 const Container = styled(View, {
   style: {
@@ -16,27 +9,17 @@ const Container = styled(View, {
   },
 });
 
-const Pair = styled(View, {
+const DefaultFormPairs = styled(FormPairs, {
   style: {
     gap: 2,
   },
 });
 
-const Cell = styled(View, {
-  style: {
-  },
-});
-
 export default function FormView(props: FormViewPropsType) {
-  const {children, pairStyle, leftStyle, rightStyle, ...rest} = props;
+  const {pairStyle, leftStyle, rightStyle, children, ...rest} = props;
   return (
     <Container {...rest}>
-      {useFormView(children).map(([left, right], i) =>
-        <Pair key={i} style={pairStyle}>
-          <Cell style={leftStyle} children={left}/>
-          <Cell style={rightStyle} children={right}/>
-        </Pair>
-      )}
+      <DefaultFormPairs style={pairStyle} leftStyle={leftStyle} rightStyle={rightStyle} children={children}/>
     </Container>
-  );
+  )
 }

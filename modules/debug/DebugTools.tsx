@@ -1,12 +1,27 @@
+import {useCallback} from "react";
 import {
-  Card,
-  DefaultIndexContainer, FormView,
-  H,
-  styled, T, DebouncedTextInput, useSubscriptions, Code, Button, Icon, Row, useStoredState, View, ScrollView, useMote,
-  TextInput, useEventListener, SubTheme
+  DefaultIndexContainer,
+  FormView,
+  T,
+  DebouncedTextInput,
+  useSubscriptions,
+  Code,
+  useStoredState,
+  useMote,
+  TextInput,
+  useEventListener,
+  SubTheme,
+  FormCard,
+  Form,
+  Field,
+  useSubmitForm,
+  FormProvider,
+  useFormController,
+  useLiveStoredFormController
 } from "@/core";
-import {ReactNode, useCallback} from "react";
-import {FormCard} from "@/core/components/FormCard";
+
+
+type TopicAndMessage = {topic: string; message: string;};
 
 
 function Subscriber() {
@@ -26,43 +41,46 @@ function Subscriber() {
 
 function Retainer() {
   const {retain} = useMote();
-  const [topic, setTopic] = useStoredState("debug.retainer.topic");
-  const [message, setMessage] = useStoredState("debug.retainer.message");
-  const onPress = useCallback(() => {
+  const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
+    console.log(topic, message);
     if(topic) {
       retain(topic, message);
     }
-  }, [topic, message])
+  }, [retain]);
+  const form = useLiveStoredFormController({key: "debug.form.retainer", defaultData: {topic: "", message: ""}, onSubmit});
   return (
-    <FormCard header="Retain" rightButton={{onPress, icon: "Save"}}>
-      <FormView>
-        <T children="Topic:"/>
-        <TextInput value={topic} setValue={setTopic} icon="Paperclip" placeholder="device/aphrodite/name"/>
-        <T children="Message:"/>
-        <TextInput value={message} setValue={setMessage} placeholder=""/>
-      </FormView>
-    </FormCard>
+    <FormProvider value={form}>
+      <FormCard header="Retain" rightButton={{onPress: form.submit, icon: "Save"}}>
+        <FormView>
+          <T children="Topic:"/>
+          <Field type={TextInput} name="topic" icon="Paperclip" placeholder="device/aphrodite/name" onSubmitEditing={form.submit}/>
+          <T children="Message:"/>
+          <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
+        </FormView>
+      </FormCard>
+    </FormProvider>
   );
 }
 
 function Commander() {
   const {command} = useMote();
-  const [topic, setTopic] = useStoredState("debug.commander.topic");
-  const [message, setMessage] = useStoredState("debug.commander.message");
-  const onPress = useCallback(() => {
+  const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
     if(topic) {
       command(topic, message);
     }
-  }, [topic, message])
+  }, [command]);
+  const form = useLiveStoredFormController({key: "debug.form.commander", defaultData: {topic: "", message: ""}, onSubmit});
   return (
-    <FormCard header="Send Command" rightButton={{onPress, icon: "Send"}}>
-      <FormView>
-        <T children="Topic:"/>
-        <TextInput value={topic} setValue={setTopic} icon="Paperclip" placeholder="device/aphrodite/role/power/command/off"/>
-        <T children="Params:"/>
-        <TextInput value={message} setValue={setMessage} placeholder=""/>
-      </FormView>
-    </FormCard>
+    <FormProvider value={form}>
+      <FormCard header="Send Command" rightButton={{onPress: form.submit, icon: "SendHorizontal"}}>
+        <FormView>
+          <T children="Topic:"/>
+          <Field type={TextInput} name="topic" icon="Paperclip" placeholder="device/aphrodite/role/power/command/off" onSubmitEditing={form.submit}/>
+          <T children="Params:"/>
+          <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
+        </FormView>
+      </FormCard>
+    </FormProvider>
   );
 }
 
@@ -100,22 +118,23 @@ function EventListenerMessages({topic}: {topic: string}) {
 
 function EventCreator() {
   const {spray} = useMote();
-  const [topic, setTopic] = useStoredState("debug.event-creator.topic");
-  const [message, setMessage] = useStoredState("debug.event-creator.message");
-  const onPress = useCallback(() => {
+  const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
     if(topic) {
       spray(topic, message);
     }
-  }, [topic, message])
+  }, [spray]);
+  const form = useLiveStoredFormController({key: "debug.form.event-creator", defaultData: {topic: "", message: ""}, onSubmit});
   return (
-    <FormCard header="Create Event" rightButton={{onPress, icon: "Send"}}>
-      <FormView>
-        <T children="Topic:"/>
-        <TextInput value={topic} icon="Paperclip" setValue={setTopic} placeholder="device/aphrodite/event/wake"/>
-        <T children="Params:"/>
-        <TextInput value={message} setValue={setMessage} placeholder=""/>
-      </FormView>
-    </FormCard>
+    <FormProvider value={form}>
+      <FormCard header="Create Event" rightButton={{onPress: form.submit, icon: "Send"}}>
+        <FormView>
+          <T children="Topic:"/>
+          <Field type={TextInput} name="topic" icon="Paperclip" placeholder="device/aphrodite/event/wake" onSubmitEditing={form.submit}/>
+          <T children="Params:"/>
+          <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
+        </FormView>
+      </FormCard>
+    </FormProvider>
   );
 }
 

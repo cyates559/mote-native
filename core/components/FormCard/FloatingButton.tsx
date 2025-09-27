@@ -1,9 +1,13 @@
-import {Button, ButtonPropsType, Icon, IconNameType, styled} from "@/core";
+import {styled} from "@/core/styled";
+import {Icon, IconNameType} from "../Icon";
+import {Button, ButtonPropsType} from "../Button";
 
 
 const FloatingButtonComponent = styled(Button, {
   compact: true,
   style: {
+    borderRadius: "100vh",
+    padding: 5,
     position: "absolute",
   }
 });

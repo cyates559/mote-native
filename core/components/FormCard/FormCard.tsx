@@ -1,8 +1,9 @@
-import {ReactNode} from "react";
-import {Card, H, Row, styled} from "@/core";
+import {ViewPropsType} from "@/core/styled";
+import {H} from "../Text";
+import {Row, styled} from "../View";
+import {Card} from "../Card";
 
 import FloatingButton, {FloatingButtonPropsType} from "./FloatingButton";
-import {ViewPropsType} from "@/core/styled";
 
 const Container = styled(Card, {
   style: {

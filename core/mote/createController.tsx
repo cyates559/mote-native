@@ -223,7 +223,7 @@ export default function createController(stateRef: { current: MoteStateType }, s
     retain: (topic: string, message?: string | null) => {
       publish(topic, message ?? "", {qos: 1, retain: true})
     },
-    retainTree: (topic: string, message: any) => {
+    retainTree: <T extends {}>(topic: string, message: T) => {
       publish(topic + "/", JSON.stringify(message) ?? "", {qos: 1, retain: true})
     },
     spray: (topic: string, message?: string | null) => {

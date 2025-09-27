@@ -17,7 +17,6 @@ export default function styled<InPropsType extends StylePropsType, DefaultPropsK
     const theme = useTheme();
     const refProps = useMemo(() => forwardRef? {[refPropKey]: forwardRef}: {}, [forwardRef]);
 
-
     const flatProps = useMemo(() => Object.keys(defaultProps).reduce((results, key) => {
       // @ts-ignore
       const value = defaultProps[key];

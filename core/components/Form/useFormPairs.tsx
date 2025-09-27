@@ -1,6 +1,19 @@
-import {FormViewControllerType} from "./types";
-import {ReactNode, useCallback, useMemo, useState} from "react";
-import {LayoutChangeEvent} from "react-native";
+import {ReactNode, useMemo} from "react";
+
+export default function useFormPairs(children: ReactNode[]) {
+  return useMemo(() => {
+    const result: [ReactNode | undefined, ReactNode][] = [];
+    for (let i = 0, j = 1; i < children.length; i += 2, j += 2) {
+      if(j === children.length) {
+        // The final component can have no label
+        result.push([null, children[i]]);
+      } else {
+        result.push([children[i], children[j]]);
+      }
+    }
+    return result;
+  }, [children])
+}
 
 // export default function useFormView(children: ReactNode[]): FormViewControllerType {
 //   const [leftWidths, setLeftWidths] = useState<number[]>([]);
@@ -40,17 +53,3 @@ import {LayoutChangeEvent} from "react-native";
 //     childPairs, onLayout, isWrapped, leftWidth, rightWidth, onLeftSizeChange: leftOnResize, onRightSizeChange: rightOnResize,
 //   }
 // }
-export default function useFormView(children: ReactNode[]) {
-  return useMemo(() => {
-    const result: [ReactNode | undefined, ReactNode][] = [];
-    for (let i = 0, j = 1; i < children.length; i += 2, j += 2) {
-      if(j === children.length) {
-        // The final component can have no label
-        result.push([null, children[i]]);
-      } else {
-        result.push([children[i], children[j]]);
-      }
-    }
-    return result;
-  }, [children])
-}
