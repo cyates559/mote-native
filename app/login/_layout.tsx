@@ -1,0 +1,1 @@
+export {LoginLayout as default} from "@/core";

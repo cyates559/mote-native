@@ -1,6 +1,6 @@
 import {useMemo} from "react";
 import {router} from "expo-router";
-import {HrefPropsType} from "./ButtonLink";
+import {HrefPropsType} from "./types";
 
 export default function useHrefOnPress({href, hrefMode}: HrefPropsType) {
   return useMemo(() => {

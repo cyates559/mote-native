@@ -2,7 +2,7 @@ import MoteStateType from "@/core/mote/types/MoteStateType";
 import ConnectionState from "@/core/mote/types/ConnectionState";
 
 const defaultState: MoteStateType = {
-  connectionState: ConnectionState.DISCONNECTED,
+  connectionState: ConnectionState.NOT_CONNECTED,
   outgoingMessages: [],
   outgoingSubscribes: [],
   outgoingUnsubscribes: [],

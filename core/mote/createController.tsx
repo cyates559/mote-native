@@ -1,18 +1,24 @@
-import MoteStateType from "@/core/mote/types/MoteStateType";
-import MoteStateDispatchType from "@/core/mote/types/MoteStateDispatchType";
-import PublisherType from "@/core/mote/types/PublisherType";
 import Packet from "@/core/mote/packets/Packet";
 import {TopicWithOptionsType} from "@/core/mote/packets/SubscribePacket";
-import ConnectionState from "@/core/mote/types/ConnectionState";
-import CallbackType from "@/core/mote/types/CallbackType";
-import QosType from "@/core/mote/types/QosType";
-import {SubscriptionResultPair} from "@/core";
-import NodeType from "@/core/mote/types/NodeType";
+import {
+  BranchNodeType,
+  CallbackType,
+  MoteControllerType,
+  MoteStateDispatchType,
+  MoteStateType,
+  NodeType,
+  PublisherType,
+  QosType,
+  SubscriptionResultPairType,
+  ConnectionState,
+} from "./types";
 
 const MIN_RESPONSE_TIME = 1000;
 const encoder = new TextEncoder();
 
-export default function createController(stateRef: { current: MoteStateType }, setState: MoteStateDispatchType) {
+export type StateRefType = { current: MoteStateType };
+
+export default function createController(stateRef: StateRefType, setState: MoteStateDispatchType): MoteControllerType {
   const isMessageInflight = (id: number) => {
     for (const {id: i} of stateRef.current.outgoingMessages) if (id === i) {
       return true;
@@ -31,6 +37,7 @@ export default function createController(stateRef: { current: MoteStateType }, s
       return;
     } else if(connectionState !== ConnectionState.AUTHENTICATED) {
       console.log("Publish failed: Not Authenticated!");
+      return;
     }
     const data = encoder.encode(message)
     const {qos = 0, retain = false} = options;
@@ -71,6 +78,7 @@ export default function createController(stateRef: { current: MoteStateType }, s
       return;
     } else if(connectionState !== ConnectionState.AUTHENTICATED) {
       console.log("Subscribe failed: Not Authenticated!");
+      return;
     }
     let id;
     try {
@@ -105,6 +113,7 @@ export default function createController(stateRef: { current: MoteStateType }, s
       return;
     } else if(connectionState !== ConnectionState.AUTHENTICATED) {
       console.log("Unsub failed: Not Authenticated!");
+      return;
     }
     let id;
     try {
@@ -172,7 +181,7 @@ export default function createController(stateRef: { current: MoteStateType }, s
       }
     }
   };
-  const addSubscription = (topic: string, callback: CallbackType, qos: QosType = 1): SubscriptionResultPair => {
+  const addSubscription = (topic: string, callback: CallbackType, qos: QosType = 1): SubscriptionResultPairType => {
     let data = null;
     if (stateRef.current.subscriptions.hasOwnProperty(topic)) {
       stateRef.current.subscriptions[topic].push(callback);
@@ -215,6 +224,8 @@ export default function createController(stateRef: { current: MoteStateType }, s
     return results;
   };
   return {
+    error: null,
+    state: ConnectionState.NOT_CONNECTED,
     publish, subscribe, unsubscribe, removeListener, addListener,
     removeSubscription, addSubscription, addSubscriptions,
     command: (topic: string, params?: string | null) => {
@@ -223,15 +234,17 @@ export default function createController(stateRef: { current: MoteStateType }, s
     retain: (topic: string, message?: string | null) => {
       publish(topic, message ?? "", {qos: 1, retain: true})
     },
-    retainTree: <T extends {}>(topic: string, message: T) => {
+    retainTree: <T extends BranchNodeType>(topic: string, message?: T) => {
       publish(topic + "/", JSON.stringify(message) ?? "", {qos: 1, retain: true})
     },
     spray: (topic: string, message?: string | null) => {
       publish(topic, message ?? "", {qos: 0, retain: false})
     },
-    reconnect: () => setState(state => {
-      return {...state, error: null, retries: 0};
-    }),
+    connect: () => setState(state => state.connectionState === ConnectionState.DISCONNECTED?
+      {...state, connectionState: ConnectionState.NOT_CONNECTED}:
+      state
+    ),
+    disconnect: () => stateRef.current.socket?.close(),
     getSubscriptionData: (topic: string) => {
       return stateRef.current.subscriptionData[topic];
     },

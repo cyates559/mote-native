@@ -1,5 +1,6 @@
-import {MoteLogo, T, Icon, ButtonLink, Leaf} from "@/core/components";
+import {Button, Icon, Leaf, MoteLogo, T} from "@/core/components";
 import {SafeAreaView} from "react-native";
+import {useMote} from "@/core/mote";
 
 
 export default function Login() {
@@ -10,12 +11,10 @@ export default function Login() {
         header="Mote"
         text="You are not connected"
       >
-        <ButtonLink theme="AccentCard" href="/m/" hrefMode="replace">
+        <Button theme="AccentCard" onPress={useMote().connect}>
           <Icon name="HousePlug"/>
-          <T>
-            Connect
-          </T>
-        </ButtonLink>
+          <T children="Connect"/>
+        </Button>
       </Leaf>
     </SafeAreaView>
   );

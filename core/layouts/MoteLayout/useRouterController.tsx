@@ -146,7 +146,7 @@ export default function useRouterController(props: ModulePropsType): RouterType 
   const {pathname} = useRouteInfo()
   const {back, dismiss} = useRouter();
   const route = useMemo(() => {
-    const route = pathname.split("/").slice(1);
+    const route = pathname === "/"? ["/"]: pathname.split("/").slice(1);
     route[0] = "/";
     return route;
   }, [pathname]);

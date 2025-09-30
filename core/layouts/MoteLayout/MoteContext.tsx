@@ -20,5 +20,5 @@ const MoteContext = createContext<MoteControllerType>({
   addListener: noop,
   removeSubscription: noop,
   removeListener: noop,
-});
+} as any);
 export default MoteContext;

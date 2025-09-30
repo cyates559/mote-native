@@ -1,1 +1,1 @@
-export {default} from "@/core/layouts/MoteLayout/MoteLayout";
+export {default} from "@/core/layouts/MoteLayout/AuthedLayout";

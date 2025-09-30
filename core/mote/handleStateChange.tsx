@@ -15,7 +15,6 @@ const PROTOCOL = process.env.EXPO_PUBLIC_MOTE_PROTOCOL || (window.location.proto
 const PORT = process.env.EXPO_PUBLIC_MOTE_PORT || null;
 const PATH = process.env.REACT_APP_MOTE_PATH || "/mote/";
 const URL = `${PROTOCOL}://${HOST}:${PORT? `:${PORT}`: ""}${PATH}`;
-const MAX_RECONNECT_ATTEMPTS = 5;
 const pingRequest = Packet.toBytes("pingreq", {});
 const decoder = new TextDecoder();
 
@@ -30,23 +29,23 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
   switch(state.connectionState) {
     default:
       return;
-    case ConnectionState.DISCONNECTED:
-      if(state.retries > MAX_RECONNECT_ATTEMPTS) {
-        return;
-      }
+    case ConnectionState.NOT_CONNECTED:
       const socket = new WebSocket(URL, "mqtt");
       socket.binaryType = "arraybuffer";
-      setState({
+      setState(state => ({
         ...state,
         connectionState: ConnectionState.CONNECTING,
         socket,
         pingTimeout: 0,
-      });
+      }));
       socket.addEventListener("open", () => {
         setState(state => ({...state, connectionState: ConnectionState.UNAUTHENTICATED}));
       });
       socket.addEventListener("close", () => {
         setState(state => {
+          if(state.connectionState === ConnectionState.DISCONNECTED) {
+            return state;
+          }
           [state.outgoingMessages, state.outgoingSubscribes, state.outgoingUnsubscribes].forEach(list =>
             list.forEach(({timeout}) => window.clearTimeout(timeout))
           );

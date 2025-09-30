@@ -13,7 +13,7 @@ import Navbar from "./Navbar";
 const settingsComposer: RouteType[] = [];
 
 const props: ModulePropsType = {
-  baseHref: "/m/" as any,
+  baseHref: "/app" as any,
   settingsComposer,
   workers: [],
   composer: [],
@@ -35,7 +35,7 @@ props.composer.push({
 props.composer.push({
   nodeId: "logout",
   title: "Disconnect",
-  href: "/",
+  href: {pathname: "/logout", params: {route: []}},
   hrefMode: "replace",
   icon: "DoorOpen",
   children: settingsComposer,

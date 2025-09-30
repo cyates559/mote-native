@@ -42,7 +42,6 @@ function Subscriber() {
 function Retainer() {
   const {retain} = useMote();
   const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
-    console.log(topic, message);
     if(topic) {
       retain(topic, message);
     }

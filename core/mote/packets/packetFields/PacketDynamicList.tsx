@@ -26,7 +26,7 @@ export default abstract class PacketDynamicList<V> extends PacketField<V[]> {
       const value: Partial<V> = {};
       for(const [key, field] of this.getFields()) {
         let length;
-        [value[key], length] = field.fromBytes(index, data, 0 /* I'm lazy */);
+        [value[key], length] = field.fromBytes(index, data, 0 /* I'login lazy */);
         index += length;
         totalLength += length;
       }

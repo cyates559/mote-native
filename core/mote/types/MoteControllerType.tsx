@@ -7,13 +7,14 @@ import NodeType, {BranchNodeType} from "@/core/mote/types/NodeType";
 
 export type GenericPublisherType<T=string | null | undefined> = (topic: string, message?: T) => void;
 
-export type SubscriptionResultPair = [() => void, string | {[key: string]: NodeType} | null];
+export type SubscriptionResultPairType = [() => void, string | {[key: string]: NodeType} | null];
 
 export default interface MoteControllerType {
   state: ConnectionState;
   publish: RootPublisherType;
   error: string | null;
-  reconnect: () => void;
+  connect: () => void;
+  disconnect: () => void;
   getCachedEvents: (topic: string) => any[];
   getSubscriptionData: (topic: string) => any;
   subscribe: (...props: TopicWithOptionsType[]) => void;
@@ -21,8 +22,8 @@ export default interface MoteControllerType {
   removeListener: (topic: string, callback: CallbackType) => void;
   removeSubscription: (topic: string, callback: CallbackType) => void;
   addListener: (topic: string, callback: CallbackType, qos?: QosType) => void;
-  addSubscription: (topic: string, callback: CallbackType, qos?: QosType) => SubscriptionResultPair;
-  addSubscriptions: (topics: string[], callbacks: CallbackType[], qos?: QosType) => SubscriptionResultPair[];
+  addSubscription: (topic: string, callback: CallbackType, qos?: QosType) => SubscriptionResultPairType;
+  addSubscriptions: (topics: string[], callbacks: CallbackType[], qos?: QosType) => SubscriptionResultPairType[];
   command: GenericPublisherType;
   retain: GenericPublisherType;
   retainTree: GenericPublisherType<BranchNodeType>;

@@ -1,27 +1,37 @@
-import {Redirect} from "expo-router";
-import {Loading, Leaf} from "@/core/components";
+import {useEffect, useRef} from "react";
+import {router, useGlobalSearchParams} from "expo-router";
+import {Leaf, Loading, joinPaths} from "@/core/components";
 import {StoreProvider} from "@/core/store";
-import {ConnectionState, useMoteController} from "@/core/mote";
+import {ConnectionState, useMote} from "@/core/mote";
 import MoteContext from "./MoteContext";
 import ModuleLayout from "./ModuleLayout";
-import {AsyncStorageLayout} from "@/core";
-import {useEffect, useMemo, useRef, useState} from "react";
-import MoteStateType from "@/core/mote/types/MoteStateType";
-import defaultState from "@/core/mote/defaultState";
-import createController from "@/core/mote/createController";
-import handleStateChange from "@/core/mote/handleStateChange";
+import {AsyncStorageLayout} from "../AsyncStorageLayout";
 
-export default function MoteLayout() {
-  const mote = useMoteController();
+export default function AuthedLayout() {
+  const mote = useMote();
+  // I'm upset
+  const route = useGlobalSearchParams().route;
+  const routeRef = useRef(route);
+  useEffect(() => {
+    if(mote.state === ConnectionState.DISCONNECTED) {
+      router.replace({pathname: joinPaths("/login", ...(routeRef.current?? [])) as any},);
+    }
+  }, [mote.state]);
+  useEffect(() => {routeRef.current = route;}, [route]);
+
   switch (mote.state) {
+    case ConnectionState.DISCONNECTED:
+      return <Leaf header="Redirecting..."/>
+    case ConnectionState.UNAUTHENTICATED:
     case ConnectionState.AUTHENTICATING:
       return (
         <Loading
           header="Logging in..."
-          text="Almost theme"
+          text="Almost there"
         />
       );
     case ConnectionState.CONNECTING:
+    case ConnectionState.NOT_CONNECTED:
       return (
         <Loading
           header="Connecting..."
@@ -35,8 +45,6 @@ export default function MoteLayout() {
           text={mote.state + " " + mote.error}
         />
       );
-    case ConnectionState.DISCONNECTED:
-      return <Redirect href="/"/>
     case ConnectionState.AUTHENTICATED:
       return (
         <AsyncStorageLayout>

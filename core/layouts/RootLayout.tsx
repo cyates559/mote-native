@@ -2,9 +2,19 @@ import {StatusBar} from "react-native";
 import { Slot } from "expo-router";
 import {useFonts} from "expo-font";
 import {Loading, T, useTheme} from "@/core/components";
+import {createContext} from "react";
+import { useRouteInfo } from "expo-router/build/hooks";
+import MoteContext from "./MoteLayout/MoteContext";
+import useMoteController from "../mote/useMoteController";
 
+export type RouteInfoType = {
+  path: string;
+};
+
+export const RouteContext = createContext<RouteInfoType>({path: ""});
 
 export default function RootLayout() {
+  const mote = useMoteController();
   const [loaded, error] = useFonts(fontMap);
   const theme = useTheme();
   if(!loaded) {
@@ -21,10 +31,13 @@ export default function RootLayout() {
     //   </ErrorText>
     // );
   }
-  return <>
+  return (<RouteContext.Provider value={{path: useRouteInfo().pathname}}>
+
+    <MoteContext.Provider value={mote}>
     <StatusBar backgroundColor={theme.spicyColor} barStyle="light-content"/>
     <Slot/>
-  </>;
+    </MoteContext.Provider>
+  </RouteContext.Provider>);
 }
 
 const fontMap = {

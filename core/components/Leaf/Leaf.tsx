@@ -6,7 +6,7 @@ import {Icon, IconNameType} from "../Icon";
 import BackgroundScrollView from "@/core/components/View/BackgroundScrollView";
 import {StyleSheet} from "react-native";
 
-export interface DeadEndPropsType extends ViewPropsType {
+export interface LeafPropsType extends ViewPropsType {
   loading?: boolean;
   splash?: ReactNode | true;
   header?: ReactNode;
@@ -57,7 +57,7 @@ export const DeadEndSpinner = styled(Spinner, {
 });
 
 
-export default function Leaf(props: DeadEndPropsType) {
+export default function Leaf(props: LeafPropsType) {
   const {loading, style, innerStyle, outerStyle, splash, icon, header, text, children, ...rest} = props;
   const ccs = useMemo(() => StyleSheet.flatten([baseStyle, style]), [style]);
   const os = useMemo(() => StyleSheet.flatten([baseOuterStyle, outerStyle]), [outerStyle]);

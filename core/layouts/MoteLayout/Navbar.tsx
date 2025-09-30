@@ -46,7 +46,7 @@ export default function Navbar() {
   return (
     <Themes.Nav>
       <NavbarContainer>
-        <NavLink href="/m/">
+        <NavLink href="/app">
           <Icon name="House"/>
           {l === -1? undefined: <Icon name="ChevronRight"/>}
         </NavLink>
