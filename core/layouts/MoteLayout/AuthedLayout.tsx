@@ -22,7 +22,6 @@ export default function AuthedLayout() {
   switch (mote.state) {
     case ConnectionState.DISCONNECTED:
       return <Leaf header="Redirecting..."/>
-    case ConnectionState.UNAUTHENTICATED:
     case ConnectionState.AUTHENTICATING:
       return (
         <Loading

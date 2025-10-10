@@ -3,7 +3,7 @@ import {H} from "../Text";
 import {Row, styled} from "../View";
 import {Card} from "../Card";
 
-import FloatingButton, {FloatingButtonPropsType} from "./FloatingButton";
+import FormCardFloatingButton, {FormCardFloatingButtonPropsType} from "./FormCardFloatingButton";
 
 const Container = styled(Card, {
   style: {
@@ -25,8 +25,8 @@ const HeaderRow = styled(Row, {
 
 export interface FormCardPropsType extends ViewPropsType {
   header: string;
-  leftButton?: FloatingButtonPropsType;
-  rightButton?: FloatingButtonPropsType;
+  leftButton?: FormCardFloatingButtonPropsType;
+  rightButton?: FormCardFloatingButtonPropsType;
 }
 
 
@@ -35,9 +35,9 @@ export default function FormCard(props: FormCardPropsType) {
   return (
     <Container {...rest}>
       <HeaderRow style={{alignItems: "center", justifyContent: "center", paddingHorizontal: 48}}>
-        {leftButton && <FloatingButton {...leftButton}/>}
+        {leftButton && <FormCardFloatingButton {...leftButton} style={{start: 0}}/>}
         <H h={4} children={header}/>
-        {rightButton && <FloatingButton {...rightButton} style={{end: 0}}/>}
+        {rightButton && <FormCardFloatingButton {...rightButton} style={{end: 0}}/>}
       </HeaderRow>
       {children}
     </Container>

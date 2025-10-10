@@ -99,13 +99,13 @@ export default function Sidebar() {
                   if (typeof option === "string") {
                     return <Spinner key={j} children={option}/>;
                   } else {
-                    const {nodeId, href, hrefMode, icon, title} = option;
+                    const {nodeId, href, hrefMode, title, icon} = option;
                     const selected = nodeId === route[i + 1];
                     return (
                       <SidebarLink key={nodeId} href={href} hrefMode={hrefMode} selected={selected}>
-                      <Icon name={option.icon}/>
-                      <SidebarLinkText children={option.title}/>
-                      <Icon name="ChevronRight" style={selected? {}: {opacity: 0}}/>
+                        <Icon name={icon}/>
+                        <SidebarLinkText children={title}/>
+                        <Icon name="ChevronRight" style={selected? {}: {opacity: 0}}/>
                       </SidebarLink>
                     );
                   }

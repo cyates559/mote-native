@@ -39,6 +39,11 @@ export default interface ThemeType {
   cardBackgroundColor: ColorValue; // backgroundColor
   cardStyle: ViewStyle & TextStyle; // style
 
+  // Menu theme
+  menuColor: ColorValue; // color
+  menuBackgroundColor: ColorValue; // backgroundColor
+  menuStyle: ViewStyle & TextStyle; // style
+
   // Error theme
   errorColor: ColorValue; // backgroundColor
   errorContrastColor: ColorValue; // color

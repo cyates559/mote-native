@@ -30,7 +30,7 @@ const defaultTheme: ThemeType = {
   },
   // Hover theme
   hoverColor: "white",
-  hoverBackgroundColor: "#777777", // backgroundColor
+  hoverBackgroundColor: "rgba(100, 100, 100, 0.6)", // backgroundColor
   hoverStyle: {},
 
   // Accent theme
@@ -44,6 +44,19 @@ const defaultTheme: ThemeType = {
     borderRadius: 8,
     // borderWidth: 1,
     shadowColor: "#ffc600",
+    shadowOffset: { width: 1, height: 2, },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 6,
+  }, // style
+
+  // Menu theme
+  menuColor: "#331233", // color
+  menuBackgroundColor: "#F2F2F2", // backgroundColor
+  menuStyle: {
+    borderRadius: 8,
+    // borderWidth: 1,
+    shadowColor: "#33002a",
     shadowOffset: { width: 1, height: 2, },
     shadowOpacity: 1,
     shadowRadius: 2,

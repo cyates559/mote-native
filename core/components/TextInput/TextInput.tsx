@@ -21,6 +21,10 @@ export interface TextInputPropsType extends
   enabled?: boolean;
 }
 
+export const TEXT_INPUT_FLOATING_ICON_SIZE = 16
+export const TEXT_INPUT_FLOATING_ICON_OUTER_SIZE = 26;
+export const TEXT_INPUT_FLOATING_ICON_MARGIN = 6;
+
 const Container = styled(View, {
   style: {
     alignItems: "stretch",
@@ -29,10 +33,10 @@ const Container = styled(View, {
 });
 
 const FloatingIcon = styled(Icon, {
-  size: 16,
+  size: TEXT_INPUT_FLOATING_ICON_SIZE,
   style: {
     position: "absolute",
-    start: 6,
+    start: TEXT_INPUT_FLOATING_ICON_MARGIN,
   },
 });
 
@@ -47,12 +51,12 @@ const Component = styled(CoreTextInput, {
 
 const ComponentWithIcon = styled(Component, {
   style: {
-    paddingLeft: 26,
+    paddingStart: TEXT_INPUT_FLOATING_ICON_OUTER_SIZE,
   }
 });
 
 export default function TextInput(props: TextInputPropsType) {
-  const {value, theme="Input", icon, setValue, ...rest} = props;
+  const {value, theme="Input", icon, setValue, children, ...rest} = props;
   return (
     <SubTheme theme={theme} secondary={!value}>
       <Container>
@@ -60,10 +64,16 @@ export default function TextInput(props: TextInputPropsType) {
           <>
             <ComponentWithIcon value={value?? ""} onChangeText={setValue} {...rest}/>
             <FloatingIcon name={icon}/>
+            {children}
           </>:
-          <Component value={value?? ""} onChangeText={setValue} {...rest}/>
+          <>
+            <Component value={value?? ""} onChangeText={setValue} {...rest}/>
+            {children}
+          </>
         }
       </Container>
     </SubTheme>
   );
 }
+
+TextInput.rejectRef = true;

@@ -12,3 +12,7 @@ export * from "./Text";
 export * from "./TextInput";
 export * from "./View";
 export * from "./Code";
+export * from "./ChoiceInput";
+export * from "./Layer";
+export * from "./Sticky";
+export * from "./Portal";

@@ -4,6 +4,7 @@ import {useFonts} from "expo-font";
 import {Loading, T, useTheme} from "@/core/components";
 import MoteContext from "./MoteLayout/MoteContext";
 import useMoteController from "../mote/useMoteController";
+import {LayerLayout} from "@/core/components/Layer";
 
 export default function RootLayout() {
   const mote = useMoteController();
@@ -25,8 +26,10 @@ export default function RootLayout() {
   }
   return (
     <MoteContext.Provider value={mote}>
-    <StatusBar backgroundColor={theme.spicyColor} barStyle="light-content"/>
-    <Slot/>
+      <StatusBar backgroundColor={theme.spicyColor} barStyle="light-content"/>
+        <LayerLayout>
+          <Slot/>
+        </LayerLayout>
     </MoteContext.Provider>
   );
 }

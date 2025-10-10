@@ -12,6 +12,7 @@ import {
   SubscriptionResultPairType,
   ConnectionState,
 } from "./types";
+import {PublishResponseType} from "@/core/mote/types/InflightMessageType";
 
 const MIN_RESPONSE_TIME = 1000;
 const encoder = new TextEncoder();
@@ -34,10 +35,9 @@ export default function createController(stateRef: StateRefType, setState: MoteS
   const publish: PublisherType = (topic, message, options = {}) => {
     const {socket, connectionState, outgoingMessages} = stateRef.current;
     if (socket?.readyState !== WebSocket.OPEN) {
-      return;
+      throw new Error("Not Connected");
     } else if(connectionState !== ConnectionState.AUTHENTICATED) {
-      console.log("Publish failed: Not Authenticated!");
-      return;
+      throw new Error("Publish failed: Not Authenticated!");
     }
     const data = encoder.encode(message)
     const {qos = 0, retain = false} = options;
@@ -48,17 +48,24 @@ export default function createController(stateRef: StateRefType, setState: MoteS
     } catch (e) {
       setState(state => ({...state, error: (e as any).toString()}));
       socket.close();
-      return;
+      throw e;
     }
     const publishProps = {id, topic, data, qos, retain};
-    if (guarantee) {
-      const timeout = window.setTimeout(() => {
-        console.error("QOS not met! Disconnecting! (1)");
-        // TODO resend packet with DUP flag
-      }, MIN_RESPONSE_TIME);
-      outgoingMessages.push({...publishProps, timeout});
-    }
     socket.send(Packet.toBytes("publish", publishProps));
+    return new Promise<PublishResponseType>((onResponse, reject) => {
+      if (guarantee) {
+        const timeout = window.setTimeout(() => {
+          if(socket?.readyState !== WebSocket.OPEN) { return; }
+          console.error("QOS not met! Disconnecting! (1)");
+          reject();
+          stateRef.current?.socket?.close();
+          // TODO resend packet with DUP flag
+        }, MIN_RESPONSE_TIME);
+        outgoingMessages.push({...publishProps, timeout, onResponse});
+      } else {
+        onResponse({ok: true});
+      }
+    });
   }
   const isSubscriptionInflight = (id: number) => {
     for (const {id: i} of stateRef.current.outgoingSubscribes) if (id === i) {
@@ -72,7 +79,7 @@ export default function createController(stateRef: StateRefType, setState: MoteS
     }
     throw new Error("Too many inflight subscriptions!");
   };
-  const subscribe = (...props: TopicWithOptionsType[]) => {
+  const subscribe = async (...props: TopicWithOptionsType[]) => {
     const {socket, connectionState, outgoingSubscribes} = stateRef.current;
     if (socket?.readyState !== WebSocket.OPEN) {
       return;
@@ -84,16 +91,18 @@ export default function createController(stateRef: StateRefType, setState: MoteS
     try {
       id = getNextSubscriptionId();
     } catch (e) {
+      console.error(e);
       setState(state => ({...state, error: (e as any).toString()}));
       return;
     }
     const subscribeProps = {id, topics: props};
     const timeout = window.setTimeout(() => {
+      if(socket?.readyState !== WebSocket.OPEN) { return; }
       console.error("QOS not met! Disconnecting! (2)");
       // TODO resend packet with DUP flag
     }, MIN_RESPONSE_TIME);
+    socket.send(Packet.toBytes("subscribe", subscribeProps))
     outgoingSubscribes.push({...subscribeProps, timeout});
-    socket.send(Packet.toBytes("subscribe", subscribeProps));
   };
   const isUnsubInflight = (id: number) => {
     for (const {id: i} of stateRef.current.outgoingUnsubscribes) if (id === i) {
@@ -119,13 +128,16 @@ export default function createController(stateRef: StateRefType, setState: MoteS
     try {
       id = getNextUnsubId();
     } catch (e) {
+      console.error(e);
       setState(state => ({...state, error: (e as any).toString()}));
       return;
     }
     const unsubProps = {id, topics: [topic]};
     const timeout = window.setTimeout(() => {
+      if(socket?.readyState !== WebSocket.OPEN) { return; }
       console.error("QOS not met! Disconnecting! (3)");
       // TODO resend packet with DUP flag
+      socket.close();
     }, MIN_RESPONSE_TIME);
     outgoingUnsubscribes.push({...unsubProps, timeout});
     try {
@@ -229,16 +241,16 @@ export default function createController(stateRef: StateRefType, setState: MoteS
     publish, subscribe, unsubscribe, removeListener, addListener,
     removeSubscription, addSubscription, addSubscriptions,
     command: (topic: string, params?: string | null) => {
-      publish(topic, params ?? "", {qos: 2, retain: false})
+      return publish(topic, params ?? "", {qos: 2, retain: false})
     },
     retain: (topic: string, message?: string | null) => {
-      publish(topic, message ?? "", {qos: 1, retain: true})
+      return publish(topic, message ?? "", {qos: 1, retain: true})
     },
     retainTree: <T extends BranchNodeType>(topic: string, message?: T) => {
-      publish(topic + "/", JSON.stringify(message) ?? "", {qos: 1, retain: true})
+      return publish(topic + "/", JSON.stringify(message) ?? "", {qos: 1, retain: true})
     },
     spray: (topic: string, message?: string | null) => {
-      publish(topic, message ?? "", {qos: 0, retain: false})
+      return publish(topic, message ?? "", {qos: 0, retain: false})
     },
     connect: () => setState(state => state.connectionState === ConnectionState.DISCONNECTED?
       {...state, connectionState: ConnectionState.NOT_CONNECTED}:

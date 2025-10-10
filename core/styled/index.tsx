@@ -10,6 +10,7 @@ export {
   ImageBackground, ImageBackgroundProps as ImageBackgroundPropsType,
   ActivityIndicator, ActivityIndicatorProps as ActivityIndicatorPropsType,
   LayoutChangeEvent as LayoutChangeEventType,
+  Modal as CoreModal, ModalProps as CoreModalPropsType
 } from "react-native";
 
 export * from "@/core/theme";

@@ -12,9 +12,9 @@ const FloatingButtonComponent = styled(Button, {
   }
 });
 
-export type FloatingButtonPropsType = {icon: IconNameType} & Omit<ButtonPropsType, "children">;
+export type FormCardFloatingButtonPropsType = {icon: IconNameType} & Omit<ButtonPropsType, "children">;
 
-export default function FloatingButton(props: FloatingButtonPropsType) {
+export default function FormCardFloatingButton(props: FormCardFloatingButtonPropsType) {
   const {icon, ...rest} = props;
   return <FloatingButtonComponent {...rest} children={<Icon name={icon}/>}/>
 }

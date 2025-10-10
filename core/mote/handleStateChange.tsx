@@ -25,8 +25,8 @@ const MIN_RESPONSE_TIME = 1200;
 /*
  * State Machine for Mote Connection
  */
-export default function handleStateChange(state: MoteStateType, setState: MoteStateDispatchType) {
-  switch(state.connectionState) {
+export default function handleStateChange(stateRef: {current: MoteStateType}, setState: MoteStateDispatchType) {
+  switch(stateRef.current.connectionState) {
     default:
       return;
     case ConnectionState.NOT_CONNECTED:
@@ -39,7 +39,17 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
         pingTimeout: 0,
       }));
       socket.addEventListener("open", () => {
-        setState(state => ({...state, connectionState: ConnectionState.UNAUTHENTICATED}));
+        setState(state => {
+          window.clearTimeout(state.pingTimeout);
+          return {...state, connectionState: ConnectionState.AUTHENTICATING, pingTimeout: 0};
+        });
+        setTimeout(() => stateRef.current.socket?.send(Packet.toBytes("connect", {
+          clientId: `native-${Date.now().toString()}`,
+          protocol: "mote",
+          protocolVersion: 0,
+          keepAlive: PING_INTERVAL,
+          clean: true,
+        })));
       });
       socket.addEventListener("close", () => {
         setState(state => {
@@ -59,17 +69,17 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
           };
         });
       });
-      socket.addEventListener("message", ({data}: MessageEvent) => setState(state => {
+      socket.addEventListener("message", ({data}: MessageEvent) => {
         if (!(data instanceof ArrayBuffer)) {
           console.warn("Invalid message type", data);
-          return state;
-        }
-        if(!socket) {
+        } else if (socket.readyState !== WebSocket.OPEN) {
           console.error("Socket not available!")
-          return state;
+        } else if(socket != stateRef.current.socket) {
+          console.warn("Socket has been replaced!");
         }
         const [packetTypeName, packetProps] = Packet.fromBytes(data);
-        if(state.connectionState === ConnectionState.AUTHENTICATING) {
+        const {connectionState} = stateRef.current;
+        if (connectionState === ConnectionState.AUTHENTICATING) {
           if (packetTypeName !== "connack") {
             throw new Error("Expected connack");
           }
@@ -77,11 +87,13 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
           if (connackProps.returnCode !== ConnectAcknowledgementReturnCodeType.ACCEPTED) {
             throw new Error(`Connection Return Code: ${connackProps.returnCode}`);
           }
-          return {
+          setState(state => ({
             ...state,
             connectionState: ConnectionState.AUTHENTICATED,
-          };
-        } else if(packetProps.hasOwnProperty("id")) {
+          }));
+        } else if(connectionState !== ConnectionState.AUTHENTICATED) {
+          console.warn("Not authenticated!", packetTypeName, connectionState);
+        } else if (packetProps.hasOwnProperty("id")) {
           const packetIdData = packetProps as PacketWithIdDataType;
           const {id} = packetIdData;
           switch (packetTypeName) {
@@ -97,18 +109,18 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
                   break;
               }
               const {topic, data} = publishProps;
-              const {subscriptions, subscriptionData, listeners, listenerData} = state;
-              if(subscriptions.hasOwnProperty(topic)) {
+              const {subscriptions, subscriptionData, listeners, listenerData} = stateRef.current;
+              if (subscriptions.hasOwnProperty(topic)) {
                 const message = decoder.decode(data);
                 const isTree = topic.split("/").includes("+");
-                const parsedMessage = isTree? JSON.parse(message): message;
+                const parsedMessage = isTree ? JSON.parse(message) : message;
                 const updated = recursiveUpdate(subscriptionData[topic], parsedMessage);
-                const newObject = subscriptionData[topic] = updated === null?
-                  (isTree? {}: null): updated;
+                const newObject = subscriptionData[topic] = updated === null ?
+                  (isTree ? {} : null) : updated;
                 subscriptions[topic].forEach(callback => callback(newObject));
-              } else if(listeners.hasOwnProperty(topic)) {
+              } else if (listeners.hasOwnProperty(topic)) {
                 const message = decoder.decode(data);
-                const otherData = listenerData[topic] = [...(listenerData[topic]?? []), message];
+                const otherData = listenerData[topic] = [...(listenerData[topic] ?? []), message];
                 listeners[topic].forEach(callback => callback(otherData));
               }
               break;
@@ -120,16 +132,17 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
               break;
             case "puback":
             case "pubcomp":
-              state.outgoingMessages = state.outgoingMessages.filter(msg => {
+              stateRef.current.outgoingMessages = stateRef.current.outgoingMessages.filter(msg => {
                 const found = msg.id === id;
                 if (found) {
                   window.clearTimeout(msg.timeout);
+                  msg.onResponse({ok: true});
                 }
                 return !found;
               });
               break;
             case "suback":
-              state.outgoingSubscribes = state.outgoingSubscribes.filter(msg => {
+              stateRef.current.outgoingSubscribes = stateRef.current.outgoingSubscribes.filter(msg => {
                 const found = msg.id === id;
                 if (found) {
                   window.clearTimeout(msg.timeout);
@@ -138,7 +151,7 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
               });
               break;
             case "unsuback":
-              state.outgoingUnsubscribes = state.outgoingUnsubscribes.filter(msg => {
+              stateRef.current.outgoingUnsubscribes = stateRef.current.outgoingUnsubscribes.filter(msg => {
                 const found = msg.id === id;
                 if (found) {
                   window.clearTimeout(msg.timeout);
@@ -150,54 +163,36 @@ export default function handleStateChange(state: MoteStateType, setState: MoteSt
               console.error(`Unknown packet type ${packetTypeName}`);
           }
         } else if (packetTypeName === "pingresp") {
-          console.log("Received PINGRESP");
-          window.clearTimeout(state.pongTimeout);
+          console.log("Received PINGRESP", stateRef.current.pongTimeout);
+          window.clearTimeout(stateRef.current.pongTimeout);
           setState(state => ({...state, pongTimeout: 0}));
         } else {
           console.error(`Unknown packet type ${packetTypeName}`);
         }
-        return state;
-      }));
-      return;
-    case ConnectionState.UNAUTHENTICATED:
-      setState(state => {
-        window.clearTimeout(state.pingTimeout);
-        return {...state, connectionState: ConnectionState.AUTHENTICATING, pingTimeout: 0};
       });
-      state.socket?.send(Packet.toBytes("connect", {
-        clientId: `native-${Date.now().toString()}`,
-        protocol: "mote",
-        protocolVersion: 0,
-        keepAlive: PING_INTERVAL,
-        clean: true,
-      }));
       return;
     case ConnectionState.AUTHENTICATED:
-      if(!(state.pingTimeout || state.pongTimeout)) {
-        const pingTimeout = window.setTimeout(() => setState(state => {
-          if(state.socket?.readyState === WebSocket.OPEN) {
-            state.socket.send(pingRequest);
+      if(!(stateRef.current.pingTimeout || stateRef.current.pongTimeout)) {
+        const pingTimeout = window.setTimeout(() => {
+          if(stateRef.current.socket?.readyState === WebSocket.OPEN) {
+            stateRef.current.socket.send(pingRequest);
             console.log("Sent PINGREQ");
-            return {
-              ...state,
-              pingTimeout: 0,
-              pongTimeout: window.setTimeout(() => setState(state => {
-                if(state.socket?.readyState === WebSocket.OPEN) {
-                  console.log("Closing connection (timeout)");
-                  state.socket.close();
-                }
-                return {
-                  ...state,
-                  connectionState: ConnectionState.DISCONNECTED,
-                  pongTimeout: 0,
-                  error: "Pong timeout!",
-                };
-              }), MIN_RESPONSE_TIME)
-            };
+            stateRef.current.pingTimeout = 0;
+            stateRef.current.pongTimeout = window.setTimeout(() => setState(state => {
+              if(state.socket?.readyState === WebSocket.OPEN) {
+                console.log("Closing connection (timeout)");
+                state.socket.close();
+              }
+              return {
+                ...state,
+                connectionState: ConnectionState.DISCONNECTED,
+                pongTimeout: 0,
+                error: "Pong timeout!",
+              };
+            }), MIN_RESPONSE_TIME);
           }
-          return state;
-        }), PING_INTERVAL + PING_ERROR);
-        setState({...state, pingTimeout});
+        }, PING_INTERVAL + PING_ERROR);
+        window.setTimeout(() => setState(state => ({...state, pingTimeout})));
       }
       return;
   }

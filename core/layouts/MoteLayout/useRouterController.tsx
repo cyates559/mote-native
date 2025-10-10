@@ -1,11 +1,12 @@
 import {Href, useRouter} from "expo-router";
 import RouterType from "@/core/layouts/MoteLayout/types/RouterType";
 import useStores from "@/core/store/useStores";
-import {ComponentType, useCallback, useMemo} from "react";
+import {useMemo} from "react";
 import ModulePropsType from "@/core/layouts/MoteLayout/types/ModulePropsType";
 import RouteType, {
   BreadcrumbsType,
-  DynamicRouteType, RouteOptionsListType,
+  DynamicRouteType,
+  RouteOptionsListType,
   RouteOptionsType,
   StaticRouteType
 } from "@/core/layouts/MoteLayout/types/RouteType";
@@ -15,6 +16,7 @@ import DefaultIndex from "@/core/layouts/MoteLayout/DefaultIndex";
 import Home from "@/core/layouts/MoteLayout/Home";
 import {IconNameType} from "@/core/components";
 import {useRouteInfo} from "expo-router/build/hooks";
+import NotFound from "@/core/layouts/NotFound";
 
 export type FastTreeType = Record<string, FastTreeRouteType>;
 
@@ -66,7 +68,7 @@ function compileOptions(href: Href, composer: RouteType[] | undefined, dynamicOp
       const unpacked = dynamicOptions[storeKey] as StaticRouteType[];
       if(unpacked) {
         options.push(...unpacked.map(option => {
-          return {...option, href: option.href?? joinPaths(href as string, option.nodeId) as Href};
+          return {Page: child.Page, ...option, href: option.href?? joinPaths(href as string, option.nodeId) as Href};
         }));
       } else {
         options.push(loadingText);
@@ -133,10 +135,6 @@ export function getBreadcrumbs(baseHref: Href, route: string[], routeOptions: Ro
     const Page = currentRoute == null? NotFound: currentRoute.Page?? DefaultIndex;
     return {nodeId, href, title, Page, pageProps: currentRoute?.props?? {}};
   });
-}
-
-export function NotFound() {
-  return "not found"
 }
 
 const rootProps = {nodeId: "", Page: Home, icon: "Home" as IconNameType, title: "Mote"};

@@ -6,6 +6,7 @@ export {default as Error} from "./ErrorTheme";
 export {default as Input} from "./InputTheme";
 export {default as InverseAccent} from "./InverseAccentTheme";
 export {default as InverseSpicy} from "./InverseSpicyTheme";
+export {default as Menu} from "./MenuTheme";
 export {default as Nav} from "./NavTheme";
 export {default as Null} from "./NullTheme";
 export {default as Secondary} from "./SecondaryTheme";

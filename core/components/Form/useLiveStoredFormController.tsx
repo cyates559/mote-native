@@ -4,7 +4,7 @@ import {useContext, useEffect} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import StorageContext from "../../layouts/AsyncStorageLayout/StorageContext";
 
-export interface StoredFormControllerPropsType<D> extends Omit<FormControllerPropsType<D>, "startData"> {
+export interface StoredFormControllerPropsType<D extends Record<string, any>> extends Omit<FormControllerPropsType<D>, "startData"> {
   key: string;
   defaultData: D;
 }
