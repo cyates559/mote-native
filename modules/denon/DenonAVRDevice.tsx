@@ -15,7 +15,7 @@ export default function DenonAVRDevice() {
   const {nodeId, title} = useModuleRouter();
   const avrDevices = useStore<Record<string, RokuDeviceType>>(denonAVRDevicesKey);
   if(avrDevices === null) {
-    return <Loading children="Loading AVR Device..."/>;
+    return <Loading text="Loading AVR Device..."/>;
   }
   const avrDevice = avrDevices[nodeId];
   if(!avrDevice) {

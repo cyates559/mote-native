@@ -14,6 +14,7 @@ import {
   IconNameType, ButtonPropsType
 } from "@/core";
 import RokuDeviceType from "@/modules/roku/types/RokuDeviceType";
+import useRokuDevices from "@/modules/roku/useRokuDevices";
 
 const Container = styled(ScrollView, {
   contentContainerStyle: {
@@ -60,9 +61,9 @@ function RokuActionButton({action, icon, ...rest}: {action: () => void, icon: Ic
 
 export default function RokuDevice() {
   const {nodeId, title} = useModuleRouter();
-  const rokuDevices = useStore<Record<string, RokuDeviceType>>(rokuDevicesKey);
+  const rokuDevices = useRokuDevices();
   if(rokuDevices === null) {
-    return <Loading children="Loading Roku Device..."/>;
+    return <Loading text="Loading Roku Device..."/>;
   }
   const rokuDevice = rokuDevices[nodeId];
   if(!rokuDevice) {

@@ -4,7 +4,6 @@ import {useMemo} from "react";
 import DeviceType from "@/modules/devices/types/DeviceType";
 import RokuDeviceType, {rokuActionNames, RokuActionsMap} from "./types/RokuDeviceType";
 import {rokuControllerNamesKey, rokuDevicesKey, rokuOptionsKey} from "@/modules/roku/keys";
-import RokuDevice from "@/modules/roku/RokuDevice";
 
 type IdMap = Record<string, string>;
 
@@ -34,8 +33,8 @@ function parseRokuDevice(
     icon: "Tv",
     title: rokuData.name?? nodeId,
     nodeId: nodeId,
-    Page: RokuDevice,
     actions,
+    host: rokuData.host?? "",
   };
 }
 

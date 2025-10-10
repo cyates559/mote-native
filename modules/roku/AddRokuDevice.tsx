@@ -1,58 +1,37 @@
-import {
-  DefaultIndexContainer,
-  Field,
-  FormCard,
-  FormProvider,
-  FormView,
-  Loading,
-  T,
-  TextInput,
-  useFormController, useMote,
-  useStore
-} from "@/core";
-import {rokuControllerNamesKey} from "@/modules/roku/keys";
+import {DefaultIndexContainer, FormControllerType, FormErrorsType, useMote} from "@/core";
 import {useCallback} from "react";
-
-type RokuControllerNamesType = Record<string, string>;
-
-type RokuFormType = {
-  id: string;
-  controller: string;
-  host: string;
-  name: string;
-}
+import RokuDeviceForm, { RokuDeviceFormType } from "./RokuDeviceForm";
 
 export default function AddRokuDevice() {
-  const controllerNames = useStore<RokuControllerNamesType>(rokuControllerNamesKey);
-  if(controllerNames === null) {
-    return <Loading children="Loading Roku Device..."/>;
-  }
-  return <AddRokuDeviceView controllerNames={controllerNames}/>
-}
-
-function AddRokuDeviceView({controllerNames}: {controllerNames: RokuControllerNamesType}) {
   const {retainTree} = useMote();
-  const onSubmit = useCallback((roku: RokuFormType) => {
-    retainTree(`device/${roku.controller}/roku_device/${roku.id}/+`, {
+  const onSubmit = useCallback((form: FormControllerType<RokuDeviceFormType>) => {
+    const rokuFormData = form.store;
+    let errors: FormErrorsType<RokuDeviceFormType> | undefined;
+    if(!rokuFormData.id) {
+      errors = {...errors, id: "This field cannot be blank"};
+    }
+    if(!rokuFormData.host) {
+      errors = {...errors, host: "This field cannot be blank"};
+    }
+    if(!rokuFormData.controllerId) {
+      errors = {...errors, controllerId: "This field cannot be blank"};
+    }
+    if(!rokuFormData.name) {
+      errors = {...errors, name: "This field cannot be blank"};
+    }
+    if(errors) {
+      form.setErrors(errors);
+      return;
+    }
+    retainTree(`device/${rokuFormData.controllerId}/roku_device/${rokuFormData.id}/+`, {
       on: "0",
-      host: roku.host,
-      name: roku.name,
-
+      host: rokuFormData.host!,
+      name: rokuFormData.name!,
     });
   }, [retainTree]);
-  const form = useFormController({startData: {}, onSubmit});
   return (
     <DefaultIndexContainer>
-      <FormProvider value={form}>
-        <FormCard header="Retain" rightButton={{onPress: form.submit, icon: "Save"}}>
-          <FormView>
-            <T children="Topic:"/>
-            <Field type={TextInput} name="topic" icon="Paperclip" placeholder="device/aphrodite/name" onSubmitEditing={form.submit}/>
-            <T children="Message:"/>
-            <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
-          </FormView>
-        </FormCard>
-      </FormProvider>
+      <RokuDeviceForm startData={{}} onSubmit={onSubmit}/>
     </DefaultIndexContainer>
   );
 }

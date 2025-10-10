@@ -17,8 +17,9 @@ import {
   useSubmitForm,
   FormProvider,
   useFormController,
-  useLiveStoredFormController
+  useLiveStoredFormController, Layer, FormControllerType
 } from "@/core";
+import {View} from "react-native";
 
 
 type TopicAndMessage = {topic: string; message: string;};
@@ -41,7 +42,7 @@ function Subscriber() {
 
 function Retainer() {
   const {retain} = useMote();
-  const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
+  const onSubmit = useCallback(({store: {topic, message}}: FormControllerType<TopicAndMessage>) => {
     if(topic) {
       retain(topic, message);
     }
@@ -63,7 +64,7 @@ function Retainer() {
 
 function Commander() {
   const {command} = useMote();
-  const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
+  const onSubmit = useCallback(({store: {topic, message}}: FormControllerType<TopicAndMessage>) => {
     if(topic) {
       command(topic, message);
     }
@@ -117,7 +118,7 @@ function EventListenerMessages({topic}: {topic: string}) {
 
 function EventCreator() {
   const {spray} = useMote();
-  const onSubmit = useCallback(({topic, message}: TopicAndMessage) => {
+  const onSubmit = useCallback(({store: {topic, message}}: FormControllerType<TopicAndMessage>) => {
     if(topic) {
       spray(topic, message);
     }

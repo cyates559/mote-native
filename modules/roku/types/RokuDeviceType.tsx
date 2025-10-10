@@ -38,4 +38,5 @@ export default interface RokuDeviceType extends StaticRouteType {
   isConnected: boolean;
   togglePower: () => void;
   actions: RokuActionsMap;
+  host: string;
 }
