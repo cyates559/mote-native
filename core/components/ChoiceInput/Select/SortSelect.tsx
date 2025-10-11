@@ -13,6 +13,7 @@ import {
 } from "@/core/components/TextInput";
 import useSelect from "./useSelect";
 import {ChoiceInputPropsType} from "../types";
+import {ViewStyleType} from "@/core/styled";
 
 type SelectTextInputPropsType = Omit<TextInputPropsType, "children" | "value" | "setValue">;
 
@@ -56,8 +57,9 @@ const MenuContainer = styled(MenuCard, {
 
 const ListItemView = styled(View, {
   // merging with the above view causes the shadow to not work on mobile
-  style: ({style: {borderRadius}}) => StyleSheet.flatten([
+  style: ({style: {borderRadius}}) => StyleSheet.flatten<ViewStyleType>([
     {
+      // in the future we might make this built-in to MenuCard
       borderRadius,
       overflow: "hidden",
     },

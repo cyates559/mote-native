@@ -18,11 +18,23 @@ const Container = styled(View, {
   }
 });
 
+export type StickyAlignType = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
 export interface StickyPropsType extends Omit<ViewPropsType, "children">, LayerPropsType {
+  align?: StickyAlignType;
   innerStyle?: ViewStyleType;
 }
 
-export default function Sticky({style, innerStyle, ...rest}: StickyPropsType) {
+export function getStickyPositionStyle(x: number, y: number, align: StickyAlignType): ViewStyleType {
+  switch(align) {
+    case "top-left": return {top: y, left: x,};
+    case "top-right": return {top: y, right: x,};
+    case "bottom-left": return {bottom: y, left: x,};
+    case "bottom-right": return {bottom: y, right: x,};
+  }
+}
+
+export default function Sticky({style, align="top-left", innerStyle, ...rest}: StickyPropsType) {
   const [position, setPosition] = useState<[number, number]>([0, 0]);
   const anchor = useRef<View>();
   const window = useWindowDimensions();
@@ -33,9 +45,10 @@ export default function Sticky({style, innerStyle, ...rest}: StickyPropsType) {
     }))
   ), [anchor]);
   useEffect(onLayout, [window.width, window.height]);
-  const innerSheet: ViewStyleType = useMemo(() => StyleSheet.flatten([innerStyle, {
-    left: position[0], top: position[1],
-  }]), [position[0], position[1]])
+  const [x, y] = position;
+  const innerSheet: ViewStyleType = useMemo(() => StyleSheet.flatten(
+    [innerStyle, getStickyPositionStyle(x, y, align)]
+  ), [x, y, align])
   return (
     <Anchor forwardRef={anchor} style={style}>
       <Layer>
