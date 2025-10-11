@@ -3,7 +3,7 @@ import {Sticky} from "@/core/components/Sticky";
 import {MenuCard} from "@/core/components/Card";
 import {Button} from "@/core/components/Button";
 import {ArrowIcon} from "@/core/components/Icon";
-import {styled, View} from "@/core/components/View";
+import {styled, StyleSheet, View} from "@/core/components/View";
 import {
   TEXT_INPUT_FLOATING_ICON_MARGIN,
   TEXT_INPUT_FLOATING_ICON_OUTER_SIZE,
@@ -51,9 +51,22 @@ const MenuContainer = styled(MenuCard, {
     marginHorizontal: 8,
     borderTopStartRadius: 0,
     borderTopEndRadius: 0,
-    overflow: "hidden",
   }
 });
+
+const ListItemView = styled(View, {
+  // merging with the above view causes the shadow to not work on mobile
+  style: ({style: {borderRadius}}) => StyleSheet.flatten([
+    {
+      borderRadius,
+      overflow: "hidden",
+    },
+    {
+      borderTopStartRadius: 0,
+      borderTopEndRadius: 0,
+    },
+  ]),
+})
 
 const ListItem = styled(Button, {
 });
@@ -62,7 +75,7 @@ const ListItem = styled(Button, {
 export default function SortSelect<T>(props: SortSelectPropsType<T>) {
   const {children=[], value, setValue, searchValue, setSearchValue,  ...rest} = props;
   const select = useSelect({value, setValue, searchValue, setSearchValue, children});
-  const {focused, onFocus, onBlur, nextValue, setNextValue, onKeyPress, textInputRef,  onFocusListItem, onPressListItem} = select;
+  const {focused, onFocus, onBlur, nextValue, onKeyPress, textInputRef,  onFocusListItem, onPressListItem} = select;
   return (
     <Container>
       <SelectTextInput
@@ -78,18 +91,19 @@ export default function SortSelect<T>(props: SortSelectPropsType<T>) {
       <Sticky>
         {focused &&
           <MenuContainer>
-            {children.map(({props: {value: thisValue, children}}) => {
-              return (
-                <ListItem
-                  focusable={false}
-                  key={thisValue?.toString()}
-                  children={children}
-                  selected={thisValue === nextValue}
-                  onFocus={() => onFocusListItem(thisValue)}
-                  onPress={() => onPressListItem(thisValue)}
-                />
-              );
-            })}
+            <ListItemView>
+              {children.map(({props: {value: thisValue, children}}) => {
+                return (
+                  <ListItem
+                    key={thisValue?.toString()}
+                    children={children}
+                    selected={thisValue === nextValue}
+                    onFocus={() => onFocusListItem(thisValue)}
+                    onPress={() => onPressListItem(thisValue)}
+                  />
+                );
+              })}
+            </ListItemView>
           </MenuContainer>
         }
       </Sticky>

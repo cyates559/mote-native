@@ -55,11 +55,9 @@ export default function useSelect<T>(props: SelectControllerPropsType<T>): Selec
   // when value changes, nextValue should copy it
   useEffect(() => setNextValue(value), [value, setNextValue])
   const onFocus = useCallback(() => {
-    console.log("FOCUS");
     setFocused(true)
   }, [setFocused]);
   const onBlur = useCallback(() => {
-    console.log("UNFOCUS");
     setTimeout(setFocused, 1, false);
   }, [setFocused]);
   const onPressListItem = useCallback((value: T) => {

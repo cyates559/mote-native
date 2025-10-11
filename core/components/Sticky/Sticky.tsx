@@ -27,7 +27,10 @@ export default function Sticky({style, innerStyle, ...rest}: StickyPropsType) {
   const anchor = useRef<View>();
   const window = useWindowDimensions();
   const onLayout = useCallback(() => (
-    anchor.current?.measure((x, y, w, h, pageX, pageY) => setPosition([pageX, pageY]))
+    anchor.current?.measure((x, y, w, h, pageX, pageY) => setPosition(prev => {
+      if(prev[0] === pageX && prev[1] === pageY) { return prev; }
+      return [pageX, pageY];
+    }))
   ), [anchor]);
   useEffect(onLayout, [window.width, window.height]);
   const innerSheet: ViewStyleType = useMemo(() => StyleSheet.flatten([innerStyle, {
