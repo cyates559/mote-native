@@ -7,3 +7,4 @@ export {default as QosType} from "./QosType";
 export {default as MoteStateDispatchType} from "./MoteStateDispatchType";
 export {default as MoteStateType} from "./MoteStateType";
 export {default as ConnectionState} from "./ConnectionState";
+export {default as PublisherStateType} from "./PublisherStateType";

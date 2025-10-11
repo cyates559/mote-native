@@ -79,7 +79,7 @@ export default function createController(stateRef: StateRefType, setState: MoteS
     }
     throw new Error("Too many inflight subscriptions!");
   };
-  const subscribe = async (...props: TopicWithOptionsType[]) => {
+  const subscribe = (...props: TopicWithOptionsType[]) => {
     const {socket, connectionState, outgoingSubscribes} = stateRef.current;
     if (socket?.readyState !== WebSocket.OPEN) {
       return;
