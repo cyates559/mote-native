@@ -15,12 +15,14 @@ export interface SelectControllerPropsType<T> {
 
 export interface SelectControllerType<T> {
   focused: boolean;
-  onFocus: () => void;
-  onBlur: () => void;
   nextValue: T;
   textInputRef: Ref<CoreTextInput>;
   setNextValue: Dispatch<SetStateAction<T>>;
   onKeyPress: (event: NativeSyntheticEvent<TextInputKeyPressEventData>) => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  onFocusListItem: (value: T) => void;
+  onPressListItem: (value: T) => void;
 }
 
 export default function useSelect<T>(props: SelectControllerPropsType<T>): SelectControllerType<T> {
@@ -52,8 +54,18 @@ export default function useSelect<T>(props: SelectControllerPropsType<T>): Selec
   }, [focused, setValue, nextRef]);
   // when value changes, nextValue should copy it
   useEffect(() => setNextValue(value), [value, setNextValue])
-  const onFocus = useCallback(() => setFocused(true), [setFocused]);
-  const onBlur = useCallback(() => setTimeout(setFocused, 1, false), [setFocused]);
+  const onFocus = useCallback(() => {
+    console.log("FOCUS");
+    setFocused(true)
+  }, [setFocused]);
+  const onBlur = useCallback(() => {
+    console.log("UNFOCUS");
+    setTimeout(setFocused, 1, false);
+  }, [setFocused]);
+  const onPressListItem = useCallback((value: T) => {
+    setValue(value);
+    textInputRef.current?.blur();
+  }, []);
   const onKeyPress = useCallback(({nativeEvent: {key}}: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
     switch(key) {
       case "ArrowUp":
@@ -77,5 +89,8 @@ export default function useSelect<T>(props: SelectControllerPropsType<T>): Selec
         return;
     }
   }, [setNextValue, ref, childrenRef]);
-  return {focused, onFocus, onBlur, nextValue, setNextValue, onKeyPress, textInputRef};
+  return {
+    focused, onFocus, onBlur, nextValue, setNextValue,
+    onKeyPress, textInputRef, onFocusListItem: setNextValue, onPressListItem
+  };
 }

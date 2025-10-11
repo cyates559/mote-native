@@ -62,7 +62,7 @@ const ListItem = styled(Button, {
 export default function SortSelect<T>(props: SortSelectPropsType<T>) {
   const {children=[], value, setValue, searchValue, setSearchValue,  ...rest} = props;
   const select = useSelect({value, setValue, searchValue, setSearchValue, children});
-  const {focused, onFocus, onBlur, nextValue, setNextValue, onKeyPress, textInputRef} = select;
+  const {focused, onFocus, onBlur, nextValue, setNextValue, onKeyPress, textInputRef,  onFocusListItem, onPressListItem} = select;
   return (
     <Container>
       <SelectTextInput
@@ -81,10 +81,12 @@ export default function SortSelect<T>(props: SortSelectPropsType<T>) {
             {children.map(({props: {value: thisValue, children}}) => {
               return (
                 <ListItem
+                  focusable={false}
                   key={thisValue?.toString()}
                   children={children}
                   selected={thisValue === nextValue}
-                  onFocus={() => setNextValue(thisValue)}
+                  onFocus={() => onFocusListItem(thisValue)}
+                  onPress={() => onPressListItem(thisValue)}
                 />
               );
             })}
