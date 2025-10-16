@@ -27,10 +27,10 @@ export interface StickyPropsType extends Omit<ViewPropsType, "children">, LayerP
 
 export function getStickyPositionStyle(x: number, y: number, align: StickyAlignType): ViewStyleType {
   switch(align) {
-    case "top-left": return {top: y, left: x,};
-    case "top-right": return {top: y, right: x,};
-    case "bottom-left": return {bottom: y, left: x,};
-    case "bottom-right": return {bottom: y, right: x,};
+    case "top-left": return {top: y, left: x};
+    case "top-right": return {top: y, right: x};
+    case "bottom-left": return {bottom: y, left: x};
+    case "bottom-right": return {bottom: y, right: x};
   }
 }
 

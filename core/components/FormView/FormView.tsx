@@ -1,7 +1,7 @@
 import {styled, View, ViewStyleType} from "../View";
-import {FormPairs, FormPairsPropsType} from "../Form";
+import {FormFieldGroups, FormFieldGroupsPropsType} from "../Form";
 
-export type FormViewPropsType = FormPairsPropsType & {pairStyle?: ViewStyleType};
+export type FormViewPropsType = FormFieldGroupsPropsType & {pairStyle?: ViewStyleType};
 
 const Container = styled(View, {
   style: {
@@ -9,17 +9,17 @@ const Container = styled(View, {
   },
 });
 
-const DefaultFormPairs = styled(FormPairs, {
+const DefaultFieldGroups = styled(FormFieldGroups, {
   style: {
     gap: 2,
   },
 });
 
 export default function FormView(props: FormViewPropsType) {
-  const {pairStyle, leftStyle, rightStyle, children, ...rest} = props;
+  const {pairStyle, labelStyle, rightStyle, children, ...rest} = props;
   return (
     <Container {...rest}>
-      <DefaultFormPairs style={pairStyle} leftStyle={leftStyle} rightStyle={rightStyle} children={children}/>
+      <DefaultFieldGroups style={pairStyle} leftStyle={labelStyle} rightStyle={rightStyle} children={children}/>
     </Container>
   )
 }

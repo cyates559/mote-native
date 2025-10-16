@@ -1,19 +1,21 @@
 import {ReactNode} from "react";
 import {View, ViewStyleType, ViewPropsType} from "../View";
-import useFormPairs from "./useFormPairs";
+import useFormFieldGroups from "./useFormFieldGroups";
 
-export interface FormPairsPropsType extends ViewPropsType {
+export interface FormFieldGroupsPropsType extends ViewPropsType {
   children: ReactNode[];
-  leftStyle?: ViewStyleType;
-  rightStyle?: ViewStyleType;
+  labelStyle?: ViewStyleType;
+  inputStyle?: ViewStyleType;
+  errorsStyle?: ViewStyleType;
 }
 
-export default function FormPairs(props: FormPairsPropsType) {
-  const {children, leftStyle, rightStyle, ...rest} = props;
-  return useFormPairs(children).map(([left, right], i) =>
+export default function FormFieldGroups(props: FormFieldGroupsPropsType) {
+  const {children, labelStyle, inputStyle, errorsStyle, ...rest} = props;
+  return useFormFieldGroups(children).map(([a, b, c], i) =>
     <View key={i} {...rest}>
-      <View style={leftStyle} children={left}/>
-      <View style={rightStyle} children={right}/>
+      <View style={labelStyle} children={a}/>
+      <View style={inputStyle} children={b}/>
+      <View style={errorsStyle} children={c}/>
     </View>
   );
 }

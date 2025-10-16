@@ -1,21 +1,21 @@
 import {ReactNode, useMemo} from "react";
 
-export default function useFormPairs(children: ReactNode[]) {
+export default function useFormFieldGroups(children: ReactNode[]) {
   return useMemo(() => {
-    const result: [ReactNode | undefined, ReactNode][] = [];
-    for (let i = 0, j = 1; i < children.length; i += 2, j += 2) {
-      if(j === children.length) {
+    const result: [ReactNode, ReactNode, ReactNode][] = [];
+    for (let i = 0, j = 1, k = 2; i < children.length; i += 3, j += 3, k += 3) {
+      if(k >= children.length) {
         // The final component can have no label
-        result.push([null, children[i]]);
+        result.push([null, children[i], children[j]]);
       } else {
-        result.push([children[i], children[j]]);
+        result.push([children[i], children[j], children[k]]);
       }
     }
     return result;
   }, [children])
 }
 
-// export default function useFormView(children: ReactNode[]): FormViewControllerType {
+// export default function useFormFieldGroups(children: ReactNode[]): FormViewControllerType {
 //   const [leftWidths, setLeftWidths] = useState<number[]>([]);
 //   const [rightWidths, setRightWidths] = useState<number[]>([]);
 //   const [fullWidth, setFullWidth] = useState<number>(0);

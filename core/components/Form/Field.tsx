@@ -1,5 +1,5 @@
-import {StylePropsType} from "@/core/styled";
 import {ComponentType, Dispatch, SetStateAction} from "react";
+import {StylePropsType} from "@/core/styled";
 import useFormField from "./useFormField";
 
 export type InputComponentPropsType<T> = StylePropsType & {
@@ -20,3 +20,4 @@ export default function Field<P extends InputComponentPropsType<T>, T=any>(props
   const {type: Type, name, ...rest} = props;
   return <Type {...rest as any} {...useFormField(name)}/>
 }
+
