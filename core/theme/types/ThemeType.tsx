@@ -2,10 +2,12 @@ import {TextStyle, ViewStyle} from "react-native";
 import {ColorValue} from "react-native/Libraries/StyleSheet/StyleSheet";
 import {type FontFamilyType} from "@/core/components/Text/T";
 
+export type MixedStyleType = ViewStyle & Omit<TextStyle, "boxShadow">;
+
 export default interface ThemeType {
   // Main theme
   color?: ColorValue;
-  style: ViewStyle & TextStyle;
+  style: MixedStyleType;
   textStyle: TextStyle;
   fontFamily: FontFamilyType;
   backgroundColor?: ColorValue;
@@ -20,15 +22,15 @@ export default interface ThemeType {
   // Selection theme
   selectedColor: ColorValue;
   selectedBackgroundColor: ColorValue; // backgroundColor
-  selectedStyle: ViewStyle & TextStyle;
+  selectedStyle: MixedStyleType;
   // Pressed theme
   pressedColor: ColorValue;
   pressedBackgroundColor: ColorValue; // backgroundColor
-  pressedStyle: ViewStyle & TextStyle;
+  pressedStyle: MixedStyleType;
   // Hover theme
   hoverColor: ColorValue;
   hoverBackgroundColor: ColorValue; // backgroundColor
-  hoverStyle: ViewStyle & TextStyle;
+  hoverStyle: MixedStyleType;
 
   // Accent theme
   accentColor: ColorValue; // backgroundColor or color (inverse)
@@ -37,12 +39,12 @@ export default interface ThemeType {
   // Card theme
   cardColor: ColorValue; // color
   cardBackgroundColor: ColorValue; // backgroundColor
-  cardStyle: ViewStyle & TextStyle; // style
+  cardStyle: MixedStyleType; // style
 
   // Menu theme
   menuColor: ColorValue; // color
   menuBackgroundColor: ColorValue; // backgroundColor
-  menuStyle: ViewStyle & TextStyle; // style
+  menuStyle: MixedStyleType; // style
 
   // Error theme
   errorColor: ColorValue; // backgroundColor
@@ -51,10 +53,10 @@ export default interface ThemeType {
   // Input theme
   inputColor: ColorValue; // color
   inputBackgroundColor: ColorValue; // backgroundColor
-  inputStyle: ViewStyle & TextStyle; // style
+  inputStyle: MixedStyleType; // style
 
   // Inverse themes
-  inverseButtonStyle: ViewStyle & TextStyle; // style
+  inverseButtonStyle: MixedStyleType; // style
 
   // Nav theme
   navColor: ColorValue; // color

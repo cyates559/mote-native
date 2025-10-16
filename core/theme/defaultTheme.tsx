@@ -1,4 +1,5 @@
 import type ThemeType from "./types/ThemeType";
+import {BoxShadowValue} from "react-native";
 
 const defaultTheme: ThemeType = {
   // Main theme
@@ -42,12 +43,15 @@ const defaultTheme: ThemeType = {
   cardBackgroundColor: "#F2F2F2", // backgroundColor
   cardStyle: {
     borderRadius: 8,
+    overflow: "hidden",
     // borderWidth: 1,
-    shadowColor: "#ffc600",
-    shadowOffset: { width: 1, height: 2, },
-    shadowOpacity: 1,
-    shadowRadius: 2,
-    elevation: 6,
+    // shadowColor: "#ffc600",
+    // shadowOffset: { width: 1, height: 2, },
+    // shadowOpacity: 1,
+    // shadowRadius: 2,
+    // elevation: 6,
+    boxShadow: "1px 2px 2px #ffc600",
+    // boxShadow: [{offsetX: 1, offsetY: 2, blurRadius: 2, spreadDistance: 2, color: "#ffc600"}],
   }, // style
 
   // Menu theme
@@ -55,6 +59,7 @@ const defaultTheme: ThemeType = {
   menuBackgroundColor: "#F2F2F2", // backgroundColor
   menuStyle: {
     borderRadius: 8,
+    overflow: "hidden",
     // borderWidth: 1,
     shadowColor: "#33002a",
     shadowOffset: { width: 1, height: 2, },
