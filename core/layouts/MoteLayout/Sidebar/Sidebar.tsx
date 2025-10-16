@@ -75,44 +75,49 @@ export default function Sidebar() {
   }, [routeOptions.length, setSizes]);
   const columnCount = routeOptions.length - 1;
   useEffect(() => setSizes(prev => prev.length === columnCount? prev: prev.slice(0, columnCount)), [columnCount])
-  const width = useMemo(() => {
+  const [width, count] = useMemo(() => {
     let total = 0;
+    let count = 0;
     const max = pageWidth * sidebarPercentage;
     for (const size of sizes) {
       const newTotal = total + size;
       if(newTotal > max) {
-        return total;
+        return [total, count];
       }
+      count++;
       total = newTotal;
     }
-    return total;
+    return [total, count];
   }, [pageWidth, sizes]);
   const currentSizeStyle = useMemo(() => ({width}), [width]);
   return (
     <Themes.Sidebar>
       <SidebarPadding style={width === 0? {paddingHorizontal: 0}: undefined}>
         <SidebarContainer style={currentSizeStyle}>
-          {routeOptions.slice(0, -1).map((options, i) =>
-            <SidebarColumn key={i}>
-              <InnerColumn onLayout={(event) => onLayout(i, event)}>
-                {options.map((option, j) => {
-                  if (typeof option === "string") {
-                    return <Spinner key={j} children={option}/>;
-                  } else {
-                    const {nodeId, href, hrefMode, title, icon} = option;
-                    const selected = nodeId === route[i + 1];
-                    return (
-                      <SidebarLink key={nodeId} href={href} hrefMode={hrefMode} selected={selected}>
-                        <Icon name={icon}/>
-                        <SidebarLinkText children={title}/>
-                        <Icon name="ChevronRight" style={selected? {}: {opacity: 0}}/>
-                      </SidebarLink>
-                    );
-                  }
-                })}
-              </InnerColumn>
-            </SidebarColumn>
-          )}
+          {routeOptions.slice(0, -1).map((options, i) => {
+            const focusable = i < count;
+            return (
+              <SidebarColumn key={i}>
+                <InnerColumn onLayout={(event) => onLayout(i, event)}>
+                  {options.map((option, j) => {
+                    if (typeof option === "string") {
+                      return <Spinner key={j} children={option}/>;
+                    } else {
+                      const {nodeId, href, hrefMode, title, icon} = option;
+                      const selected = nodeId === route[i + 1];
+                      return (
+                        <SidebarLink focusable={focusable} tabIndex={focusable? undefined: -1} key={nodeId} href={href} hrefMode={hrefMode} selected={selected}>
+                          <Icon name={icon}/>
+                          <SidebarLinkText children={title}/>
+                          <Icon name="ChevronRight" style={selected ? {} : {opacity: 0}}/>
+                        </SidebarLink>
+                      );
+                    }
+                  })}
+                  </InnerColumn>
+              </SidebarColumn>
+            );
+          })}
         </SidebarContainer>
       </SidebarPadding>
     </Themes.Sidebar>

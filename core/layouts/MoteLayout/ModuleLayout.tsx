@@ -34,7 +34,7 @@ props.composer.push({
 
 props.composer.push({
   nodeId: "logout",
-  title: "Disconnect",
+  title: "Log out",
   href: {pathname: "/logout", params: {route: []}},
   hrefMode: "replace",
   icon: "DoorOpen",
