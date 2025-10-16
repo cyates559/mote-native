@@ -14,7 +14,7 @@ import RokuDeviceType from "@/modules/roku/types/RokuDeviceType";
 export default function DenonAVRDevice() {
   const {nodeId, title} = useModuleRouter();
   const avrDevices = useStore<Record<string, RokuDeviceType>>(denonAVRDevicesKey);
-  if(avrDevices === null) {
+  if(avrDevices === null) { // should not be needed as router should have waited for this
     return <Loading text="Loading AVR Device..."/>;
   }
   const avrDevice = avrDevices[nodeId];

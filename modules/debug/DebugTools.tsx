@@ -7,19 +7,14 @@ import {
   useSubscriptions,
   Code,
   useStoredState,
-  useMote,
   TextInput,
   useEventListener,
   SubTheme,
   FormCard,
-  Form,
   Field,
-  useSubmitForm,
   FormProvider,
-  useFormController,
-  useLiveStoredFormController, Layer, FormControllerType
+  useLiveStoredFormController, FormControllerType, useRetain, LoadingOverlay, useCommand, useSpray
 } from "@/core";
-import {View} from "react-native";
 
 
 type TopicAndMessage = {topic: string; message: string;};
@@ -41,12 +36,10 @@ function Subscriber() {
 }
 
 function Retainer() {
-  const {retain} = useMote();
+  const request = useRetain();
   const onSubmit = useCallback(({store: {topic, message}}: FormControllerType<TopicAndMessage>) => {
-    if(topic) {
-      retain(topic, message);
-    }
-  }, [retain]);
+    request.send(topic, message);
+  }, [request.send]);
   const form = useLiveStoredFormController({key: "debug.form.retainer", defaultData: {topic: "", message: ""}, onSubmit});
   return (
     <FormProvider value={form}>
@@ -57,18 +50,17 @@ function Retainer() {
           <T children="Message:"/>
           <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
         </FormView>
+        {request.loading && <LoadingOverlay/>}
       </FormCard>
     </FormProvider>
   );
 }
 
 function Commander() {
-  const {command} = useMote();
+  const request = useCommand();
   const onSubmit = useCallback(({store: {topic, message}}: FormControllerType<TopicAndMessage>) => {
-    if(topic) {
-      command(topic, message);
-    }
-  }, [command]);
+    request.send(topic, message);
+  }, [request.send]);
   const form = useLiveStoredFormController({key: "debug.form.commander", defaultData: {topic: "", message: ""}, onSubmit});
   return (
     <FormProvider value={form}>
@@ -79,6 +71,7 @@ function Commander() {
           <T children="Params:"/>
           <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
         </FormView>
+        {request.loading && <LoadingOverlay/>}
       </FormCard>
     </FormProvider>
   );
@@ -117,12 +110,12 @@ function EventListenerMessages({topic}: {topic: string}) {
 }
 
 function EventCreator() {
-  const {spray} = useMote();
+  const request = useSpray();
   const onSubmit = useCallback(({store: {topic, message}}: FormControllerType<TopicAndMessage>) => {
     if(topic) {
-      spray(topic, message);
+      request.send(topic, message);
     }
-  }, [spray]);
+  }, [request.send]);
   const form = useLiveStoredFormController({key: "debug.form.event-creator", defaultData: {topic: "", message: ""}, onSubmit});
   return (
     <FormProvider value={form}>
@@ -134,6 +127,7 @@ function EventCreator() {
           <Field type={TextInput} name="message" placeholder="" onSubmitEditing={form.submit}/>
         </FormView>
       </FormCard>
+      {request.loading && <LoadingOverlay/>}
     </FormProvider>
   );
 }

@@ -20,7 +20,8 @@ function parseAVRDevice(
     nodeId,
   );
   const commandTopic = joinPaths(topic, "command");
-  const isConnected =  !denonAVRData.connected || parseInt(denonAVRData.connected) > 0;
+  const isConnected =  denonAVRData.connected === "2";
+  const isConnecting =  denonAVRData.connected === "1";
   const actions = denonAVRActionNames.reduce((actions, actionName) => {
     const actionTopic = joinPaths(commandTopic, actionName);
     actions[actionName] = () => command(actionTopic)
@@ -30,15 +31,16 @@ function parseAVRDevice(
   return {
     controllerId,
     topic,
+    isConnecting,
     isConnected,
     isOn,
-    powerState: (denonAVRData.power_state as any)?? "UNKNOWN",
+    powerState: (denonAVRData.power_state as DenonAVRDeviceType["powerState"])?? "UNKNOWN",
     togglePower: isOn? actions.sleep: actions.on,
     icon: "Speaker",
     title: denonAVRData.name?? nodeId,
     nodeId: nodeId,
-    Page: DenonAVRDevice,
     actions,
+    host: denonAVRData.host?? "",
   };
 }
 

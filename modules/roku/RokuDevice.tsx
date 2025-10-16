@@ -72,7 +72,7 @@ export default function RokuDevice() {
   const {isConnected, actions} = rokuDevice;
   if(!isConnected) {
     return (
-      <Leaf icon="Signal" header={`${title} Roku is Offline`}>
+      <Leaf icon="Signal" header={`${title} Roku device is Offline`}>
         <Button theme="AccentCard" onPress={actions.on}>
           <Icon name="Power"/>
           <T children="Power On"/>

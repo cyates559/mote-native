@@ -6,7 +6,7 @@ import {
   Loading,
   NotFound,
   useModuleRouter,
-  useMote
+  useRetainTree
 } from "@/core";
 import RokuDeviceForm, { RokuDeviceFormType } from "./RokuDeviceForm";
 import useRokuDevices from "@/modules/roku/useRokuDevices";
@@ -34,40 +34,39 @@ function EditRokuDeviceView({deviceId, rokuDevice}: {deviceId: string, rokuDevic
     controllerId: rokuDevice.controllerId,
     name: rokuDevice.title,
   }), [rokuDevice]);
-  const {retainTree} = useMote();
+  const request = useRetainTree();
   const onSubmit = useCallback((form: FormControllerType<RokuDeviceFormType>) => {
     const rokuFormData = form.store;
     if(deviceId !== rokuFormData.id || rokuDevice.controllerId !== rokuFormData.controllerId) {
-      retainTree(`device/${rokuDevice.controllerId}/role/roku_controller/roku_device/${deviceId}/+`, {"/": "+"});
+      request.send(`device/${rokuDevice.controllerId}/role/roku_controller/roku_device/${deviceId}/+`, {"/": "+"});
     }
     let errors: FormErrorsType<RokuDeviceFormType> | undefined;
     if(!rokuFormData.id) {
-      errors = {...errors, id: "This field cannot be blank"};
+      errors = {...errors, id: ["This field cannot be blank"]};
     }
     if(!rokuFormData.host) {
-      errors = {...errors, host: "This field cannot be blank"};
+      errors = {...errors, host: ["This field cannot be blank"]};
     }
     if(!rokuFormData.controllerId) {
-      errors = {...errors, controllerId: "This field cannot be blank"};
+      errors = {...errors, controllerId: ["This field cannot be blank"]};
     }
     if(!rokuFormData.name) {
-      errors = {...errors, name: "This field cannot be blank"};
+      errors = {...errors, name: ["This field cannot be blank"]};
     }
     if(errors) {
       form.setErrors(errors);
-      console.error(errors)
       return;
     }
-    retainTree(`device/${rokuFormData.controllerId}/role/roku_controller/roku_device/${rokuFormData.id}/+`, {
+    request.send(`device/${rokuFormData.controllerId}/role/roku_controller/roku_device/${rokuFormData.id}/+`, {
       on: "0",
       host: rokuFormData.host!,
       name: rokuFormData.name!,
     });
 
-  }, [retainTree]);
+  }, [request.send]);
   return (
     <DefaultIndexContainer>
-      <RokuDeviceForm startData={startData} onSubmit={onSubmit}/>
+      <RokuDeviceForm startData={startData} onSubmit={onSubmit} loading={request.loading}/>
     </DefaultIndexContainer>
   );
 }

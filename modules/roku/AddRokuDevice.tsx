@@ -1,37 +1,37 @@
-import {DefaultIndexContainer, FormControllerType, FormErrorsType, useMote} from "@/core";
+import {DefaultIndexContainer, FormControllerType, FormErrorsType, useRetainTree} from "@/core";
 import {useCallback} from "react";
 import RokuDeviceForm, { RokuDeviceFormType } from "./RokuDeviceForm";
 
 export default function AddRokuDevice() {
-  const {retainTree} = useMote();
+  const request = useRetainTree();
   const onSubmit = useCallback((form: FormControllerType<RokuDeviceFormType>) => {
     const rokuFormData = form.store;
     let errors: FormErrorsType<RokuDeviceFormType> | undefined;
     if(!rokuFormData.id) {
-      errors = {...errors, id: "This field cannot be blank"};
+      errors = {...errors, id: ["This field cannot be blank"]};
     }
     if(!rokuFormData.host) {
-      errors = {...errors, host: "This field cannot be blank"};
+      errors = {...errors, host: ["This field cannot be blank"]};
     }
     if(!rokuFormData.controllerId) {
-      errors = {...errors, controllerId: "This field cannot be blank"};
+      errors = {...errors, controllerId: ["This field cannot be blank"]};
     }
     if(!rokuFormData.name) {
-      errors = {...errors, name: "This field cannot be blank"};
+      errors = {...errors, name: ["This field cannot be blank"]};
     }
     if(errors) {
       form.setErrors(errors);
       return;
     }
-    retainTree(`device/${rokuFormData.controllerId}/roku_device/${rokuFormData.id}/+`, {
+    request.send(`device/${rokuFormData.controllerId}/role/roku_controller/roku_device/${rokuFormData.id}/+`, {
       on: "0",
       host: rokuFormData.host!,
       name: rokuFormData.name!,
     });
-  }, [retainTree]);
+  }, [request.send]);
   return (
     <DefaultIndexContainer>
-      <RokuDeviceForm startData={{}} onSubmit={onSubmit}/>
+      <RokuDeviceForm startData={{}} onSubmit={onSubmit} loading={request.loading}/>
     </DefaultIndexContainer>
   );
 }

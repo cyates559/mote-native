@@ -16,48 +16,48 @@ import {useCallback} from "react";
 import LoadingOverlay from "@/core/components/Leaf/LoadingOverlay";
 
 
-export type RokuDeviceFormType = {
+export type DenonAVRDeviceFormType = {
   id?: string;
   controllerId?: string;
   host?: string;
   name?: string;
 }
 
-type RokuControllerNamesType = Record<string, string>;
+type DenonAVRControllerNamesType = Record<string, string>;
 
-type RokuDeviceFormPropsType = FormControllerPropsType<RokuDeviceFormType> & {
+type DenonAVRDeviceFormPropsType = FormControllerPropsType<DenonAVRDeviceFormType> & {
   loading: boolean;
 };
 
-type RokuDeviceFormViewPropsType = FormControllerPropsType<RokuDeviceFormType> & {
-  controllerNames: RokuControllerNamesType;
+type DenonAVRDeviceFormViewPropsType = FormControllerPropsType<DenonAVRDeviceFormType> & {
+  controllerNames: DenonAVRControllerNamesType;
   loading: boolean;
 };
 
-export default function RokuDeviceForm(props: RokuDeviceFormPropsType) {
-  const controllerNames = useStore<RokuControllerNamesType>(rokuControllerNamesKey);
+export default function DenonAVRDeviceForm(props: DenonAVRDeviceFormPropsType) {
+  const controllerNames = useStore<DenonAVRControllerNamesType>(rokuControllerNamesKey);
   if(controllerNames == null) {
-    return <Loading text="Loading Roku Controllers..."/>;
+    return <Loading text="Loading Denon AVR Controllers..."/>;
   }
-  return <RokuDeviceFormView {...props} controllerNames={controllerNames}/>
+  return <DenonAVRDeviceFormView {...props} controllerNames={controllerNames}/>
 }
 
-function RokuDeviceFormView({controllerNames, loading, ...rest}: RokuDeviceFormViewPropsType) {
+function DenonAVRDeviceFormView({controllerNames, loading, ...rest}: DenonAVRDeviceFormViewPropsType) {
   const form = useFormController(rest);
   const initialId = rest.startData.id;
-  const header = `${initialId? "Edit": "Add"} Roku Device`;
+  const header = `${initialId? "Edit": "Add"} Denon AVR Device`;
   const del = useRetainTree();
-  const deleteRokuDevice = useCallback(() => {
-    del.send(`device/${rest.startData.controllerId}/role/roku_controller/roku_device/${initialId}/+`, {"/": "+"});
+  const deleteDenonAVRDevice = useCallback(() => {
+    del.send(`device/${rest.startData.controllerId}/role/denon_avr/avr_device/${initialId}/+`, {"/": "+"});
   }, [initialId]);
-  const leftButton: FormCardFloatingButtonPropsType = {onPress: deleteRokuDevice, icon: "Trash"};
+  const leftButton: FormCardFloatingButtonPropsType = {onPress: deleteDenonAVRDevice, icon: "Trash"};
   const rightButton: FormCardFloatingButtonPropsType = {onPress: form.submit, icon: "Save"};
   return (
     <FormProvider value={form}>
       <FormCard header={header} rightButton={rightButton} leftButton={initialId? leftButton: undefined}>
         <FormView>
           <T children="Name:"/>
-          <Field type={TextInput} name="name" placeholder="My Roku" onSubmitEditing={form.submit}/>
+          <Field type={TextInput} name="name" placeholder="My Amplifier" onSubmitEditing={form.submit}/>
           <FieldErrors name="name"/>
           <T children="Controller:"/>
           <Field type={Select} name="controllerId" selectTextOnFocus onSubmitEditing={form.submit}>
@@ -67,7 +67,7 @@ function RokuDeviceFormView({controllerNames, loading, ...rest}: RokuDeviceFormV
           </Field>
           <FieldErrors name="controllerId"/>
           <T children="ID:"/>
-          <Field type={TextInput} name="id" placeholder="my_roku" onSubmitEditing={form.submit}/>
+          <Field type={TextInput} name="id" placeholder="my_amp" onSubmitEditing={form.submit}/>
           <FieldErrors name="id"/>
           <T children="Host:"/>
           <Field type={TextInput} name="host" placeholder="10.0.0.200" onSubmitEditing={form.submit}/>

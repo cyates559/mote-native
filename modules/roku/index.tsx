@@ -17,7 +17,7 @@ export class RokuModule extends BaseModule {
     settingsComposer.push(
       {nodeId: "roku", title: "Roku", icon: "Tv", children: [
         {nodeId: "+", storeKey: rokuOptionsKey, loadingText: "Loading Roku Devices...", Page: EditRokuDevice},
-        {nodeId: "+add_roku", title: "New Roku", icon: "Plus", Page: AddRokuDevice},
+        {nodeId: "+add_roku_device", title: "New Roku Device", icon: "Plus", Page: AddRokuDevice},
       ]},
     );
   }
