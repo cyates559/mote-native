@@ -1,6 +1,6 @@
 import {Dispatch, Ref, SetStateAction, useCallback, useEffect, useRef, useState} from "react";
 import {OptionType} from "../types";
-import {CoreTextInput, TextInputPropsType} from "@/core";
+import {CoreTextInput} from "@/core";
 import {NativeSyntheticEvent} from "react-native/Libraries/Types/CoreEventTypes";
 import {TextInputKeyPressEventData} from "react-native/Libraries/Components/TextInput/TextInput";
 

@@ -61,7 +61,6 @@ const ListItemView = styled(View, {
     {
       // in the future we might make this built-in to MenuCard
       borderRadius,
-      overflow: "hidden",
     },
     {
       borderTopStartRadius: 0,
