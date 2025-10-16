@@ -8,9 +8,10 @@ export type GenericPublishType<T=string | null | undefined> =
 
 export interface PublisherControllerType<T> extends PublisherStateType<T> {
   send: GenericPublishType<T>;
+  loading: boolean;
 }
 
-export default function usePublisher<T>(call: GenericPublisherType<T>): PublisherControllerType<T> {
+export default function usePublish<T>(call: GenericPublisherType<T>): PublisherControllerType<T> {
   const [state, setState] = useState<PublisherStateType<T>>({});
   const send = useCallback((topic: string, message: T) => {
     setState({topic, message, response: null});
@@ -19,14 +20,14 @@ export default function usePublisher<T>(call: GenericPublisherType<T>): Publishe
     }
     call(topic, message).then(response => setState(prev => ({...prev, response})));
   }, [call]);
-  return {send, ...state};
+  return {send, loading: state.topic? !state.response: false, ...state};
 }
 
 
-export function useRetain() { return usePublisher(useContext(MoteContext).retain); }
+export function useRetain() { return usePublish(useContext(MoteContext).retain); }
 
-export function useCommand() { return usePublisher(useContext(MoteContext).command); }
+export function useCommand() { return usePublish(useContext(MoteContext).command); }
 
-export function useSpray() { return usePublisher(useContext(MoteContext).spray); }
+export function useSpray() { return usePublish(useContext(MoteContext).spray); }
 
-export function useRetainTree() { return usePublisher(useContext(MoteContext).retainTree); }
+export function useRetainTree() { return usePublish(useContext(MoteContext).retainTree); }
